@@ -6,6 +6,15 @@
 - Show their rank
 - Show match history
 
+# Notes:
+- Packages needed: express, axios, dotenv, cors
+- Accessing data: express -> Axios -> Riot API
+    - Express: helps create a web server
+    - Axios: Makes http requests
+    - dotenv: allows secrets in a .env file
+        - keep api key here
+- cors: allows frontend and backend to talk to each other
+
 ### Phase 2: Create database
 - Use mongo db 
 - Store match data into db
@@ -47,3 +56,13 @@
 
 ## Documentation of functions available to access data
 `https://developer.riotgames.com/apis#tft-league-v1`
+
+## Storage management
+Only store a player if someone searches for them (Cache-on-demand)
+- Saves Riot API calls
+- Don't have to store millions of players
+- Faster API calls
+- ***Add expiration***
+
+# DB structure
+P
