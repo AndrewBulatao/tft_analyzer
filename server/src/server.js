@@ -26,14 +26,18 @@ app.get("/", (req, res) => {
 const riotService = require("./services/riotService");
 
 // -- ENDPOINTS -- 
-// Getting username
-app.get("/summoner/:name", async (req, res) => {
+// Getting username. Need the username and tag
+app.get("/account/:gameName/:tagLine", async (req, res) => {
   try {
-    const data = await riotService.getSummonerByName(req.params.name);
+    const data = await riotService.getAccountByRiotId(
+      req.params.gameName,
+      req.params.tagLine
+    );
+
     res.json(data);
   } catch (err) {
     res.status(500).json({
-      error: "Failed to fetch summoner",
+      error: "Failed to fetch account",
       details: err.response?.data || err.message
     });
   }

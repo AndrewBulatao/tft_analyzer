@@ -2,8 +2,9 @@ const axios = require("axios");
 
 const RIOT_API_KEY = process.env.RIOT_API_KEY;
 
-async function getSummonerByName(name) {
-  const url = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}`;
+// STEP 1: Riot ID → PUUID
+async function getAccountByRiotId(gameName, tagLine) {
+  const url = `https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`;
 
   const response = await axios.get(url, {
     headers: {
@@ -15,5 +16,5 @@ async function getSummonerByName(name) {
 }
 
 module.exports = {
-  getSummonerByName
+  getAccountByRiotId
 };
