@@ -4,7 +4,7 @@
 ~~- Get riot api~~
 ~~- Be able to search player~~
 - Show their rank
-- Show match history
+~~- Show match history~~
 
 # Commands for curl
 Commands start as:
