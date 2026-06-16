@@ -1,8 +1,8 @@
 # Timeline of tasks:
 
 ### Phase 1: Getting started
-- Get riot api
-- Be able to search player
+~~- Get riot api~~
+~~- Be able to search player~~
 - Show their rank
 - Show match history
 
