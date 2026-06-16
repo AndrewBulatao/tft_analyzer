@@ -43,6 +43,42 @@ app.get("/account/:gameName/:tagLine", async (req, res) => {
   }
 });
 
+// Getting match IDs by PUUID
+app.get("/matches/:gameName/:tagLine", async (req, res) => {
+  try {
+    const account = await riotService.getAccountByRiotId(
+      req.params.gameName,
+      req.params.tagLine
+    );
+
+    const matchIds = await riotService.getMatchIds(account.puuid);
+
+    res.json({
+      puuid: account.puuid,
+      matchIds
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to fetch matches",
+      details: err.response?.data || err.message
+    });
+  }
+});
+
+// Getting match details from tags
+app.get("/match/:matchId", async (req, res) => {
+  try {
+    const match = await riotService.getMatchDetails(req.params.matchId);
+    res.json(match);
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to fetch match details",
+      details: err.response?.data || err.message
+    });
+  }
+});
+
 // Server is running
 app.listen(3000, () => {
   console.log("Server running on port 3000");

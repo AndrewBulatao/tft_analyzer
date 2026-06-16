@@ -6,6 +6,24 @@
 - Show their rank
 - Show match history
 
+# Commands for curl
+Commands start as:
+`curl http://localhost:3000/... | jq`
+and after the forward slash, you would choose what you want to. The | jq is for organization purposes
+
+Examples:
+- Look for users PUUID
+`curl http://localhost:3000/account/SaltyBuddy/Salty | jq`
+
+- Look for matchID
+`curl http://localhost:3000/matches/SaltyBuddy/Salty | jq`
+
+- Look for match by matchID
+`curl http://localhost:3000/match/NA1_5408919744 | jq`
+
+
+
+- 
 # Notes:
 - Packages needed: express, axios, dotenv, cors
 - Accessing data: express -> Axios -> Riot API
@@ -14,7 +32,7 @@
     - dotenv: allows secrets in a .env file
         - keep api key here
 - cors: allows frontend and backend to talk to each other
-
+- Riot APIs uses PUUID to access multiple features
 ### Phase 2: Create database
 - Use mongo db 
 - Store match data into db
