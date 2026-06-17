@@ -41,9 +41,22 @@ async function getMatchDetails(matchId) {
   return response.data;
 }
 
+async function getMatch(matchId) {
+  const url = `https://americas.api.riotgames.com/tft/match/v1/matches/${matchId}`;
+
+  const response = await axios.get(url, {
+    headers: {
+      "X-Riot-Token": RIOT_API_KEY
+    }
+  });
+
+  return response.data;
+}
+
 // Export what was gathered
 module.exports = {
   getAccountByRiotId,
   getMatchIds,
-  getMatchDetails
+  getMatchDetails,
+  getMatch
 };

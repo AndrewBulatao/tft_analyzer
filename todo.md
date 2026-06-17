@@ -6,6 +6,10 @@
 - Show their rank
 ~~- Show match history~~
 
+
+### To run server locally, be in the server directory and type
+`node src/server.js`
+
 # Commands for curl
 Commands start as:
 `curl http://localhost:3000/... | jq`

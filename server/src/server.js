@@ -79,6 +79,45 @@ app.get("/match/:matchId", async (req, res) => {
   }
 });
 
+// Get top 10 placements
+app.get("/placements/:gameName/:tagLine", async (req, res) => {
+  try {
+    // Get account
+    const account = await riotService.getAccountByRiotId(
+      req.params.gameName,
+      req.params.tagLine
+    );
+
+    // Get recent match ids
+    const matchIds = await riotService.getMatchIds(account.puuid);
+
+    const placements = [];
+
+    // Loop through each match
+    for (const matchId of matchIds) {
+      const match = await riotService.getMatch(matchId);
+
+      // Find the player in the match
+      const player = match.info.participants.find(
+        p => p.puuid === account.puuid
+      );
+
+      placements.push({
+        matchId,
+        placement: player.placement
+      });
+    }
+
+    res.json(placements);
+
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to fetch placements",
+      details: err.response?.data || err.message
+    });
+  }
+});
+
 // Server is running
 app.listen(3000, () => {
   console.log("Server running on port 3000");
