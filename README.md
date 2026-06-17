@@ -3,14 +3,15 @@
 ### Phase 1: Getting started
 ~~- Get riot api~~
 ~~- Be able to search player~~
-- Show their rank
 ~~- Show match history~~
-
+- Show their rank
 
 ### To run server locally, be in the server directory and type
 `node src/server.js`
+### in the terminal 
 
 # Commands for curl
+
 Commands start as:
 `curl http://localhost:3000/... | jq`
 and after the forward slash, you would choose what you want to. The | jq is for organization purposes
@@ -25,10 +26,10 @@ Examples:
 - Look for match by matchID
 `curl http://localhost:3000/match/NA1_5408919744 | jq`
 
+- Get 10 recent matches played
+`curl http://localhost:3000/placements/SaltyBuddy/Salty | jq`
 
-
-- 
-# Notes:
+## Notes:
 - Packages needed: express, axios, dotenv, cors
 - Accessing data: express -> Axios -> Riot API
     - Express: helps create a web server
@@ -37,12 +38,22 @@ Examples:
         - keep api key here
 - cors: allows frontend and backend to talk to each other
 - Riot APIs uses PUUID to access multiple features
-### Phase 2: Create database
+
+## Phase 2: Create database
 - Use mongo db 
 - Store match data into db
 - Be able to do queues based on requests
 
-### Phase 3: Train data
+### Notes:
+- Flow chart of accessing data in db
+    1. Request
+    2. Check MongoDB
+        - If data exists, return it
+        - Otherwise:
+            a. Riot API
+            b. Save to MongoDB
+            c. Return data
+## Phase 3: Train data
 - Export the data to Python
 - Train a model to predict and suggest better ways to play
 - We can try using mobalytics to collect data
@@ -87,4 +98,3 @@ Only store a player if someone searches for them (Cache-on-demand)
 - ***Add expiration***
 
 # DB structure
-P

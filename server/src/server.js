@@ -15,7 +15,6 @@ mongoose
     console.error("MongoDB connection error:", err);
   });
 
-
 // Routes
 app.get("/", (req, res) => {
   res.send("TFT Analyzer Backend Running");
@@ -24,8 +23,10 @@ app.get("/", (req, res) => {
 // Riot service route
 // Instead of putting api code, riotService will handle api req
 const riotService = require("./services/riotService");
+const matchService = require("./services/matchService");
 
-// -- ENDPOINTS -- 
+// -- ENDPOINTS --
+
 // Getting username. Need the username and tag
 app.get("/account/:gameName/:tagLine", async (req, res) => {
   try {
@@ -69,7 +70,10 @@ app.get("/matches/:gameName/:tagLine", async (req, res) => {
 // Getting match details from tags
 app.get("/match/:matchId", async (req, res) => {
   try {
-    const match = await riotService.getMatchDetails(req.params.matchId);
+    const match = await matchService.getMatchWithCache(
+      req.params.matchId
+    );
+
     res.json(match);
   } catch (err) {
     res.status(500).json({
@@ -95,7 +99,7 @@ app.get("/placements/:gameName/:tagLine", async (req, res) => {
 
     // Loop through each match
     for (const matchId of matchIds) {
-      const match = await riotService.getMatch(matchId);
+      const match = await matchService.getMatchWithCache(matchId);
 
       // Find the player in the match
       const player = match.info.participants.find(
