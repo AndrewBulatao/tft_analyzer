@@ -42,7 +42,7 @@ Examples:
 ## Phase 2: Create database
 - ~~Use mongo db~~
 - ~~Store match data into db~~
-- Organize players data for next phase 
+- ~~Organize players data for next phase~~ 
 
 ### Notes:
 - Flow chart of accessing data in db
@@ -55,6 +55,8 @@ Examples:
             c. Return data
 
 ## Phase 3: Train data
+- Information we want:
+    - Average end level
 - Export the data to Python
 - Train a model to predict and suggest better ways to play
 - We can try using mobalytics to collect data
@@ -99,3 +101,16 @@ Only store a player if someone searches for them (Cache-on-demand)
 - ***Add expiration***
 
 # DB structure
+
+
+## Extra features to implement in future
+- See what the most common traits played in the recent 10 games played
+    -   trait win rates
+    -   composition detection
+- Users econ usage:
+    - Not possible to get users in depth econ usage, however, you can try to reconstruct it.
+    - Use Panda's document to help calculate and find out what you need.
+    `https://www.reddit.com/r/CompetitiveTFT/comments/1td1sy7/i_tried_to_build_a_quantitative_model_of_the_tft/`
+### Website features
+- Have a bar graph visualizing the players stats
+    - This can also be used for most common traits used

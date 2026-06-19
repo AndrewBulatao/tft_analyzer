@@ -1,0 +1,52 @@
+const mongoose = require("mongoose");
+
+const Match = require("../models/Match");
+const TrainingData = require("../models/TrainingData");
+
+require("dotenv").config();
+
+async function exportTrainingData() {
+  await mongoose.connect(process.env.MONGO_URI);
+
+  const matches = await Match.find();
+
+  let inserted = 0;
+
+  for (const match of matches) {
+    const participants =
+      match.matchData.info.participants;
+
+    for (const p of participants) {
+      await TrainingData.create({
+        matchId: match.matchId,
+        puuid: p.puuid,
+
+        placement: p.placement,
+        level: p.level,
+        goldLeft: p.gold_left,
+        playersEliminated:
+          p.players_eliminated,
+        totalDamage:
+          p.total_damage_to_players,
+
+        traits: p.traits.map(
+          trait => trait.name
+        ),
+
+        units: p.units.map(
+          unit => unit.character_id
+        )
+      });
+
+      inserted++;
+    }
+  }
+
+  console.log(
+    `Inserted ${inserted} training rows`
+  );
+
+  process.exit();
+}
+
+exportTrainingData();

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// Schema for the summoner searched
 const playerSchema = new mongoose.Schema({
   puuid: {
     type: String,
