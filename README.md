@@ -62,55 +62,32 @@ Examples:
 - We can try using mobalytics to collect data
 `https://mobalytics.gg/builds-widget-documentation/`
 
-### Phase 4: Create website
-- Create a website to display
-
-
-
-### Ideas/notes
-- Flow of accessing data:
-1. Determine which region player is in, use na1 bc player is on NA
-2. Now use americas.api because match data is stored in the americas routing cluster
-- Have access to match history
-    - Fresh data is cheaper
-    - Match history service optimized for fresh data
-- Data dragon is what their official static data repo is called
-
-## Accessing data
-- Augments:
-`https://ddragon.leagueoflegends.com/cdn/13.24.1/data/en_US/tft-augments.json`
-- Champions:
-`https://ddragon.leagueoflegends.com/cdn/13.24.1/data/en_US/tft-augments.json`
-- Items:
-`https://ddragon.leagueoflegends.com/cdn/13.24.1/data/en_US/tft-augments.json`
-- Queues:
-`https://ddragon.leagueoflegends.com/cdn/13.24.1/data/en_US/tft-augments.json`
-- Regalia:
-`https://ddragon.leagueoflegends.com/cdn/13.24.1/data/en_US/tft-augments.json`
-- Traits:
-`https://ddragon.leagueoflegends.com/cdn/13.24.1/data/en_US/tft-augments.json`
-
-## Documentation of functions available to access data
-`https://developer.riotgames.com/apis#tft-league-v1`
-
-## Storage management
+### Notes
+- Storage management
 Only store a player if someone searches for them (Cache-on-demand)
 - Saves Riot API calls
 - Don't have to store millions of players
 - Faster API calls
 - ***Add expiration***
 
-# DB structure
+## Phase 4: Create website
+- Create a website to display
 
 
-## Extra features to implement in future
+## Documentation of functions available to access data
+`https://developer.riotgames.com/apis#tft-league-v1`
+
+## Extra data analysis features to implement in future
 - See what the most common traits played in the recent 10 games played
     -   trait win rates
     -   composition detection
 - Users econ usage:
     - Not possible to get users in depth econ usage, however, you can try to reconstruct it.
-    - Use Panda's document to help calculate and find out what you need.
+    - Use Panda's document to help calculate and find out what you need. Provides a 52 page research paper on econ
+    Reddit post:
     `https://www.reddit.com/r/CompetitiveTFT/comments/1td1sy7/i_tried_to_build_a_quantitative_model_of_the_tft/`
+    Actual Document:
+    `https://drive.google.com/file/d/1g8yND1BGgh1P-zcUFogs5Y7v1bkfRZuK/view`
 ### Website features
 - Have a bar graph visualizing the players stats
     - This can also be used for most common traits used
