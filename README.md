@@ -1,9 +1,9 @@
 # Timeline of tasks:
 
 ### Phase 1: Getting started
-~~- Get riot api~~
-~~- Be able to search player~~
-~~- Show match history~~
+- ~~Get riot api~~
+- ~~Be able to search player~~
+- ~~Show match history~~
 - Show their rank
 
 ### To run server locally, be in the server directory and type
@@ -40,9 +40,9 @@ Examples:
 - Riot APIs uses PUUID to access multiple features
 
 ## Phase 2: Create database
-- Use mongo db 
-- Store match data into db
-- Be able to do queues based on requests
+- ~~Use mongo db~~
+- ~~Store match data into db~~
+- Organize players data for next phase 
 
 ### Notes:
 - Flow chart of accessing data in db
@@ -53,6 +53,7 @@ Examples:
             a. Riot API
             b. Save to MongoDB
             c. Return data
+
 ## Phase 3: Train data
 - Export the data to Python
 - Train a model to predict and suggest better ways to play

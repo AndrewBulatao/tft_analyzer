@@ -1,0 +1,37 @@
+const Player = require("../models/Player");
+const riotService = require("./riotService");
+
+// Get player with caching
+async function getPlayerByRiotId(gameName, tagLine) {
+  // Check if player is already in db
+  const existingPlayer = await Player.findOne({ gameName, tagLine });
+
+  if (existingPlayer) {
+    console.log("Player cache hit");
+    return existingPlayer;
+  }
+
+  console.log("Player cache miss");
+
+  // If not, call it using riot's API
+  const account = await riotService.getAccountByRiotId(gameName, tagLine);
+
+  // Save into db
+  const newPlayer = await Player.create({
+    gameName,
+    tagLine,
+    puuid: account.puuid
+  });
+
+  return newPlayer;
+}
+
+// service function - get summoners puuid
+async function getPlayerByPUUID(puuid) {
+  return await Player.findOne({ puuid });
+}
+
+module.exports = {
+  getPlayerByRiotId,
+  getPlayerByPUUID
+};
