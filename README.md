@@ -1,16 +1,16 @@
 # Timeline of tasks:
 
-### Phase 1: Getting started
+## Phase 1: Getting started
 - ~~Get riot api~~
 - ~~Be able to search player~~
 - ~~Show match history~~
 - Show their rank
 
-### To run server locally, be in the server directory and type
-`node src/server.js`
-### in the terminal 
+- To run server locally, be in the server directory and type
+    `node src/server.js`
+  in the terminal 
 
-# Commands for curl
+### Commands for curl
 
 Commands start as:
 `curl http://localhost:3000/... | jq`
@@ -39,6 +39,8 @@ Examples:
 - cors: allows frontend and backend to talk to each other
 - Riot APIs uses PUUID to access multiple features
 
+--- 
+
 ## Phase 2: Create database
 - ~~Use mongo db~~
 - ~~Store match data into db~~
@@ -53,6 +55,8 @@ Examples:
             a. Riot API
             b. Save to MongoDB
             c. Return data
+
+--- 
 
 ## Phase 3: Train data
 - Information we want:
@@ -70,9 +74,15 @@ Only store a player if someone searches for them (Cache-on-demand)
 - Faster API calls
 - ***Add expiration***
 
+--- 
+
 ## Phase 4: Create website
 - Create a website to display
+### Website features
+- Have a bar graph visualizing the players stats
+    - This can also be used for most common traits used
 
+--- 
 
 ## Documentation of functions available to access data
 `https://developer.riotgames.com/apis#tft-league-v1`
@@ -88,6 +98,55 @@ Only store a player if someone searches for them (Cache-on-demand)
     `https://www.reddit.com/r/CompetitiveTFT/comments/1td1sy7/i_tried_to_build_a_quantitative_model_of_the_tft/`
     Actual Document:
     `https://drive.google.com/file/d/1g8yND1BGgh1P-zcUFogs5Y7v1bkfRZuK/view`
-### Website features
-- Have a bar graph visualizing the players stats
-    - This can also be used for most common traits used
+
+---
+
+## AI Integration Idea (PH Teamfight Tactics Data Analysis)
+
+This project can be extended with an AI layer that enhances the existing data analysis and placement prediction system.
+Github:
+`https://github.com/rndmagtanong/ph_tft#exploratory-data-analysis`
+
+The current project already performs:
+- Data collection from Riot API
+- Exploratory Data Analysis (traits, augments, winrates, usage rates)
+- Placement prediction using machine learning models
+
+---
+
+### Future AI Enhancement Goal
+
+The AI component will act as an **interpretation and recommendation layer** built on top of structured game data.
+
+Instead of replacing statistical analysis, AI will:
+
+- Explain trends found in the dataset in natural language
+- Summarize player performance patterns
+- Compare individual player behavior against high-performing or meta patterns
+- Highlight possible mistakes or inefficiencies based on statistical differences
+
+
+### Example AI Use Cases
+
+- “This player performs worse with Trait X compared to the dataset average.”
+- “High-winrate augments are underutilized in this player’s games.”
+- “The player tends to reach late game levels slower than higher placement games.”
+- “These traits correlate with higher average placement in the current dataset.”
+
+
+### Key Design Principle
+
+The AI does not generate raw game knowledge on its own.  
+It only interprets and explains results computed from:
+
+- EDA statistics
+- Aggregated match data
+- Machine learning outputs
+
+### Final Goal
+
+To transform raw TFT match data into an **interactive analysis system**, where:
+
+- Data shows what is happening
+- ML predicts outcomes
+- AI explains why it matters and how to improve
