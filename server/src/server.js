@@ -29,6 +29,8 @@ app.use("/", testRoutes);
 // Instead of putting api code, riotService will handle api req
 const riotService = require("./services/riotService");
 const matchService = require("./services/matchService");
+const playerStatsService = require("./services/playerStatsService");
+
 
 // -- ENDPOINTS --
 
@@ -68,6 +70,28 @@ app.get("/matches/:gameName/:tagLine", async (req, res) => {
     res.status(500).json({
       error: "Failed to fetch matches",
       details: err.response?.data || err.message
+    });
+  }
+});
+
+// Printing out player stats
+app.get("/player-stats/:gameName/:tagLine", async (req, res) => {
+  try {
+    const { gameName, tagLine } = req.params;
+
+    const account = await riotService.getAccountByRiotId(
+      gameName,
+      tagLine
+    );
+
+    const stats = await playerStatsService.getStats(account.puuid);
+
+    res.json(stats);
+
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to fetch player stats",
+      details: err.message
     });
   }
 });

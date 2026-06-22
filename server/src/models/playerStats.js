@@ -1,8 +1,9 @@
+const mongoose = require("mongoose");
+
 const playerStatsSchema = new mongoose.Schema({
   puuid: { type: String, unique: true, required: true },
 
   totalGames: Number,
-
   avgPlacement: Number,
   top4Rate: Number,
   winRate: Number,
@@ -13,11 +14,16 @@ const playerStatsSchema = new mongoose.Schema({
 
   traitStats: {
     type: Map,
-    of: new mongoose.Schema({
-      games: Number,
-      avgPlacement: Number
-    }, { _id: false })
+    of: new mongoose.Schema(
+      {
+        games: Number,
+        avgPlacement: Number
+      },
+      { _id: false }
+    )
   },
 
   lastComputed: Date
 });
+
+module.exports = mongoose.model("PlayerStats", playerStatsSchema);
