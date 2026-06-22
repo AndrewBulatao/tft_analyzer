@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 
 const app = express();
 
+const testRoutes = require("./routes/test");
+
 // Connecting to mongo
 mongoose
   .connect(process.env.MONGODB_URI)
@@ -19,6 +21,9 @@ mongoose
 app.get("/", (req, res) => {
   res.send("TFT Analyzer Backend Running");
 });
+
+// Testing
+app.use("/", testRoutes);
 
 // Riot service route
 // Instead of putting api code, riotService will handle api req
