@@ -1,12 +1,12 @@
 const riotService = require("./riotService");
 const matchService = require("./matchService");
 
-// Optional: if you already have a PlayerStats model
+// Get stats schema
 const PlayerStats = require("../models/playerStats");
 
 async function getStats(puuid) {
   try {
-    // 1. Get recent match IDs
+    // Get recent matches using puuid
     const matchIds = await riotService.getMatchIds(puuid);
 
     if (!matchIds || matchIds.length === 0) {
@@ -16,7 +16,7 @@ async function getStats(puuid) {
       };
     }
 
-    // 2. Accumulators
+    // Init vars 
     let totalGames = 0;
     let placementSum = 0;
     let top4 = 0;
@@ -25,7 +25,9 @@ async function getStats(puuid) {
     let goldSum = 0;
     let damageSum = 0;
 
-    // 3. Loop matches
+    let traitStats = {};
+
+    // Go through recent matches
     for (const matchId of matchIds) {
       const match = await matchService.getMatchWithCache(matchId);
 
@@ -37,6 +39,7 @@ async function getStats(puuid) {
 
       totalGames++;
 
+      // Get stats already given to us
       const placement = player.placement;
       placementSum += placement;
 
@@ -45,9 +48,47 @@ async function getStats(puuid) {
       levelSum += player.level || 0;
       goldSum += player.gold_left || 0;
       damageSum += player.total_damage_to_players || 0;
+
+      // Get traits
+      if (player.traits && Array.isArray(player.traits)) {
+        // Find the traits used
+        for (const trait of player.traits) {
+          const name = trait.name;
+          // If trait exists create a record for it
+          if (!traitStats[name]) {
+            traitStats[name] = {
+              games: 0,
+              activeGames: 0,
+              deadGames: 0,
+              tierSum: 0,
+              unitSum: 0
+            };
+          }
+
+          traitStats[name].games++;
+          traitStats[name].tierSum += trait.tier_current || 0;
+          traitStats[name].unitSum += trait.num_units || 0;
+
+          if ((trait.tier_current || 0) > 0) {
+            traitStats[name].activeGames++;
+          } else {
+            traitStats[name].deadGames++;
+          }
+        }
+      }
     }
 
-    // 4. Compute stats
+    // ---- finalize trait stats ----
+    for (const name in traitStats) {
+      const t = traitStats[name];
+
+      t.avgTier = t.games ? t.tierSum / t.games : 0;
+      t.avgUnits = t.games ? t.unitSum / t.games : 0;
+      t.activationRate = t.games ? t.activeGames / t.games : 0;
+      t.deadRate = t.games ? t.deadGames / t.games : 0;
+    }
+
+    // Final response object
     const stats = {
       puuid,
       totalGames,
@@ -59,25 +100,30 @@ async function getStats(puuid) {
       avgGoldLeft: totalGames ? goldSum / totalGames : 0,
       avgDamage: totalGames ? damageSum / totalGames : 0,
 
+      traitStats,
+
       lastComputed: new Date()
     };
 
-    PlayerStats.findOneAndUpdate(
-        { puuid },
-        stats,
-        {
-            psert: true,
-            returnDocument: "after"
-        }
+    // Save to DB (fixed: missing await)
+    await PlayerStats.findOneAndUpdate(
+      { puuid },
+      stats,
+      {
+        upsert: true,
+        returnDocument: "after"
+      }
     );
 
     return stats;
+
   } catch (err) {
     console.error("playerStatsService error:", err);
     throw err;
   }
 }
 
+// Export
 module.exports = {
   getStats
 };
