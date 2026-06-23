@@ -36,7 +36,5 @@ const trainingDataSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model(
-    "TrainingData",
-    trainingDataSchema
-);
+// Export
+module.exports = mongoose.model("TrainingData",trainingDataSchema);

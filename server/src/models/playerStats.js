@@ -1,5 +1,5 @@
-const riotService = require("./riotService");
-const matchService = require("./matchService");
+const riotService = require("../services/riotService");
+const matchService = require("../services/matchService");
 
 // Get stats schema
 const PlayerStats = require("../models/playerStats");
@@ -141,6 +141,4 @@ async function getStats(puuid) {
 }
 
 // Export
-module.exports = {
-  getStats
-};
+module.exports = mongoose.model("PlayerStats", schema);
