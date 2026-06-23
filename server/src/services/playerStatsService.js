@@ -1,5 +1,5 @@
-const riotService = require("./riotService");
-const matchService = require("./matchService");
+const riotService = require("../services/riotService");
+const matchService = require("../services/matchService");
 
 // Get stats schema
 const PlayerStats = require("../models/playerStats");
@@ -16,7 +16,7 @@ async function getStats(puuid) {
       };
     }
 
-    // Init vars 
+    // Init vars
     let totalGames = 0;
     let placementSum = 0;
     let top4 = 0;
@@ -27,7 +27,7 @@ async function getStats(puuid) {
 
     let traitStats = {};
 
-    // Go through recent matches
+    // Go through 10 recent matches
     for (const matchId of matchIds) {
       const match = await matchService.getMatchWithCache(matchId);
 
@@ -35,26 +35,28 @@ async function getStats(puuid) {
         (p) => p.puuid === puuid
       );
 
+      // We find the player
       if (!player) continue;
 
       totalGames++;
 
-      // Get stats already given to us
+      // Get player's placement matches
       const placement = player.placement;
       placementSum += placement;
 
       if (placement <= 4) top4++;
 
+      // End game stats
       levelSum += player.level || 0;
       goldSum += player.gold_left || 0;
       damageSum += player.total_damage_to_players || 0;
 
-      // Get traits
+      // Getting traits usage
       if (player.traits && Array.isArray(player.traits)) {
-        // Find the traits used
         for (const trait of player.traits) {
           const name = trait.name;
-          // If trait exists create a record for it
+
+          // Init trait stats object if it doesnt exist
           if (!traitStats[name]) {
             traitStats[name] = {
               games: 0,
@@ -65,6 +67,7 @@ async function getStats(puuid) {
             };
           }
 
+          // Update traits statistic for current match
           traitStats[name].games++;
           traitStats[name].tierSum += trait.tier_current || 0;
           traitStats[name].unitSum += trait.num_units || 0;
@@ -78,7 +81,7 @@ async function getStats(puuid) {
       }
     }
 
-    // ---- finalize trait stats ----
+    // Finalize trait stats
     for (const name in traitStats) {
       const t = traitStats[name];
 
@@ -88,7 +91,7 @@ async function getStats(puuid) {
       t.deadRate = t.games ? t.deadGames / t.games : 0;
     }
 
-    // Final response object
+    // Get player stats
     const stats = {
       puuid,
       totalGames,
@@ -105,13 +108,15 @@ async function getStats(puuid) {
       lastComputed: new Date()
     };
 
-    // Save to DB (fixed: missing await)
+    // update stats
     await PlayerStats.findOneAndUpdate(
       { puuid },
-      stats,
+      {
+        $set: stats
+      },
       {
         upsert: true,
-        returnDocument: "after"
+        new: true
       }
     );
 
