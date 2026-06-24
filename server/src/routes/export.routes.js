@@ -26,18 +26,17 @@ router.get("/traits/:puuid", async (req, res) => {
             { header: "Activation Rate", key: "activationRate" }
         ];
 
-        for (const name in stats.traitStats) {
-            const t = stats.traitStats[name];
+        for (const [name, t] of stats.traitStats.entries()) {
 
-            sheet.addRow({
-                trait: name,
-                games: t.games,
-                winRate: t.winRate,
-                top4Rate: t.top4Rate,
-                avgPlacement: t.avgPlacement,
-                activationRate: t.activationRate
-            });
-        }
+        sheet.addRow({
+            trait: name,
+            games: t.games,
+            winRate: t.winRate,
+            top4Rate: t.top4Rate,
+            avgPlacement: t.avgPlacement,
+            activationRate: t.activationRate
+        });
+    }
 
         // Set headers so curl downloads file
         res.setHeader(
