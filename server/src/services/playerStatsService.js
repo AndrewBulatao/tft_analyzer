@@ -53,6 +53,10 @@ async function getStats(puuid) {
 
       // Getting traits usage
       if (player.traits && Array.isArray(player.traits)) {
+
+        // IMPORTANT: prevents duplicate counting per match
+        const seenInMatch = new Set();
+
         for (const trait of player.traits) {
           const name = trait.name;
 
@@ -72,11 +76,22 @@ async function getStats(puuid) {
             };
           }
 
-          // Only count ACTIVE traits (tier > 0)
-          if ((trait.tier_current || 0) > 0) {
+          const isActive = (trait.tier_current || 0) > 0;
 
-            // Trait was actively used in this game
+          // Count trait only once per match
+          if (!seenInMatch.has(name)) {
             traitStats[name].games++;
+            seenInMatch.add(name);
+          }
+
+          // Active vs inactive logic
+          if (isActive) {
+
+            traitStats[name].activeGames++;
+
+            traitStats[name].tierSum += trait.tier_current || 0;
+            traitStats[name].unitSum += trait.num_units || 0;
+
             traitStats[name].placementSum += placement;
 
             if (placement === 1) {
@@ -87,13 +102,7 @@ async function getStats(puuid) {
               traitStats[name].top4s++;
             }
 
-            traitStats[name].activeGames++;
-
-            traitStats[name].tierSum += trait.tier_current || 0;
-            traitStats[name].unitSum += trait.num_units || 0;
-
           } else {
-            // Trait existed but was not active this game
             traitStats[name].deadGames++;
           }
         }
@@ -106,6 +115,7 @@ async function getStats(puuid) {
 
       t.avgTier = t.games ? t.tierSum / t.games : 0;
       t.avgUnits = t.games ? t.unitSum / t.games : 0;
+
       t.activationRate = t.games ? t.activeGames / t.games : 0;
       t.deadRate = t.games ? t.deadGames / t.games : 0;
 

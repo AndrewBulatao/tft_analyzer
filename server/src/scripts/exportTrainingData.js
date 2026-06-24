@@ -18,28 +18,31 @@ async function exportTrainingData() {
 
         // Inserting player data into schema
         for (const p of participants) {
-        await TrainingData.create({
-            matchId: match.matchId,
-            puuid: p.puuid,
 
-            placement: p.placement,
-            level: p.level,
-            goldLeft: p.gold_left,
-            playersEliminated:
-            p.players_eliminated,
-            totalDamage:
-            p.total_damage_to_players,
+            await TrainingData.create({
+                matchId: match.matchId,
+                puuid: p.puuid,
 
-            traits: p.traits.map(
-            trait => trait.name
-            ),
+                placement: p.placement,
+                level: p.level,
+                goldLeft: p.gold_left,
+                playersEliminated: p.players_eliminated,
+                totalDamage: p.total_damage_to_players,
 
-            units: p.units.map(
-            unit => unit.character_id
-            )
-        });
+                traits: (p.traits || []).map(trait => ({
+                    name: trait.name,
+                    numUnits: trait.numUnits || 0,
+                    tier: trait.tier || 0
+                })),
 
-        inserted++;
+                units: (p.units || []).map(unit => ({
+                    name: unit.character_id,
+                    tier: unit.tier || 1,
+                    items: unit.items || []
+                }))
+            });
+
+            inserted++;
         }
     }
 

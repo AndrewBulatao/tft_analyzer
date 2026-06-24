@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 
 const app = express();
 
+const exportRoutes = require("./routes/export.routes");
+
 const testRoutes = require("./routes/test");
 
 // Connecting to mongo
@@ -22,8 +24,10 @@ app.get("/", (req, res) => {
   res.send("TFT Analyzer Backend Running");
 });
 
+app.use("/export", exportRoutes);
+
 // Testing
-app.use("/", testRoutes);
+//app.use("/", testRoutes);
 
 // Riot service route
 // Instead of putting api code, riotService will handle api req
