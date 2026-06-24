@@ -11,7 +11,12 @@
   in the terminal 
 
 ### Commands for curl
+My puuid:
+0xsw2ec2cT43IoO8zZRrrYxjZikENaMH3zJnML4bub3c82uOTNHdmssInc1Mehc7GybGW0z2qGFtJQ
 
+## To print out excel docs
+- Traits
+    `curl -o traits.xlsx http://localhost:3000/export/traits/0xsw2ec2cT43IoO8zZRrrYxjZikENaMH3zJnML4bub3c82uOTNHdmssInc1Mehc7GybGW0z2qGFtJQ`
 Commands start as:
 `curl http://localhost:3000/... | jq`
 and after the forward slash, you would choose what you want to. The | jq is for organization purposes
@@ -61,6 +66,11 @@ Examples:
 ## Phase 3: Train data
 - Information we want:
     - Average end level
+    - Train trait data
+        - See what the most common trait the user plays
+            - see what their win percentage is with that trait
+            -  **Later implementation:** See how contested they are with traits they win/lose with the trait
+    - Average time alive
 - Export the data to Python
 - Train a model to predict and suggest better ways to play
 - We can try using mobalytics to collect data
@@ -89,8 +99,8 @@ Only store a player if someone searches for them (Cache-on-demand)
 
 ## Extra data analysis features to implement in future
 - See what the most common traits played in the recent 10 games played
-    -   trait win rates
-    -   composition detection
+    -   ~~trait win rates~~
+    -   composition detection (Not in api, could try to reverse engineer)
 - Users econ usage:
     - Not possible to get users in depth econ usage, however, you can try to reconstruct it.
     - Use Panda's document to help calculate and find out what you need. Provides a 52 page research paper on econ
