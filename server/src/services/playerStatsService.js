@@ -62,19 +62,38 @@ async function getStats(puuid) {
               games: 0,
               activeGames: 0,
               deadGames: 0,
+
+              wins: 0,
+              top4s: 0,
+              placementSum: 0,
+
               tierSum: 0,
               unitSum: 0
             };
           }
 
-          // Update traits statistic for current match
-          traitStats[name].games++;
-          traitStats[name].tierSum += trait.tier_current || 0;
-          traitStats[name].unitSum += trait.num_units || 0;
-
+          // Only count ACTIVE traits (tier > 0)
           if ((trait.tier_current || 0) > 0) {
+
+            // Trait was actively used in this game
+            traitStats[name].games++;
+            traitStats[name].placementSum += placement;
+
+            if (placement === 1) {
+              traitStats[name].wins++;
+            }
+
+            if (placement <= 4) {
+              traitStats[name].top4s++;
+            }
+
             traitStats[name].activeGames++;
+
+            traitStats[name].tierSum += trait.tier_current || 0;
+            traitStats[name].unitSum += trait.num_units || 0;
+
           } else {
+            // Trait existed but was not active this game
             traitStats[name].deadGames++;
           }
         }
@@ -89,6 +108,10 @@ async function getStats(puuid) {
       t.avgUnits = t.games ? t.unitSum / t.games : 0;
       t.activationRate = t.games ? t.activeGames / t.games : 0;
       t.deadRate = t.games ? t.deadGames / t.games : 0;
+
+      t.winRate = t.games ? t.wins / t.games : 0;
+      t.top4Rate = t.games ? t.top4s / t.games : 0;
+      t.avgPlacement = t.games ? t.placementSum / t.games : 0;
     }
 
     // Get player stats

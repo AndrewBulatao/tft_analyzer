@@ -18,12 +18,18 @@ const playerStatsSchema = new mongoose.Schema({
         games: Number,
         activeGames: Number,
         deadGames: Number,
+        
         tierSum: Number,
         unitSum: Number,
+        
         avgTier: Number,
         avgUnits: Number,
         activationRate: Number,
-        deadRate: Number
+        deadRate: Number,
+
+        winRate: Number,
+        top4Rate: Number,
+        avgPlacement: Number
       },
       { _id: false }
     )
