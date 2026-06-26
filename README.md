@@ -8,6 +8,8 @@
         - AI is consuming analytics, not raw user questions. That is the reason for the Large Language Model (LLM)
     5) Personalized Report
         - Try using OpenAI GPT-4o-mini or Google Gemini 1.5 Flash to start for testing
+
+    try to predict trends. Past 100 games, this happened. Have a slider to see where improvements. Can use ai to predict future games
 ___
 # Timeline of tasks:
 # Phase 1: Getting started
@@ -75,25 +77,93 @@ ___
 ___
 ## Phase 3: Train data
 --- 
+### Stage one: Obtain information we want
 - Information we want:
     - Average end level
     - Train trait data
-        - See what the most common trait the user plays
-            - see what their win percentage is with that trait
+        - ~~See what the most common trait the user plays~~
+            - ~~see what their win percentage is with that trait~~
             -  **Later implementation:** See how contested they are with traits they win/lose with the trait
-    - Average time alive
-- Export the data to Python
-- Train a model to predict and suggest better ways to play
-- We can try using mobalytics to collect data
-`https://mobalytics.gg/builds-widget-documentation/`
+        - Average time alive
+        - Detect playstyle
+            - Aggresive, vertical, flexible, econ
+        - What to play next
+            - See what they play the most and what works for them.
+            - Possibly see what comps they've lost the most against?
 
-### Phase 3: Notes
+    - We can try using mobalytics to collect data
+    `https://mobalytics.gg/builds-widget-documentation/`
+
+---
+
+### Stage one: Notes
 - Storage management
 Only store a player if someone searches for them (Cache-on-demand)
 - Saves Riot API calls
 - Don't have to store millions of players
 - Faster API calls
 - ***Add expiration***
+
+---
+
+### Stage two: Advanced Analysis System
+- What we want this system to do:
+    - Loss Pattern Detection
+        - Input:
+            - Traits used in bottom 4 games
+            - Economy patterns in losses
+        - Output:
+            - "You lose when you play x without y"
+            - Weakness score per trait/composition
+
+    - Placement Prediction System
+        - Estimate how well a player will perform in a game
+        - See what traits work best for them
+            - Also compare what traits they struggle against
+        - Include:
+            - Economy patterns
+            - Past performance stats
+            - Trait consistency and activation rates
+
+    - Recommendation System (Future)
+        - Suggest what to play next
+            - Based on traits the user performs well with
+            - Based on traits they underperform with
+            - Based on common successful patterns in past games
+
+        - Also consider:
+            - What traits are commonly contested in their games
+            - Whether they should pivot or continue their current direction
+
+---
+
+### Stage three: Machine learning
+- What we want the ML system to do:
+    - Learn patterns automatically from past match data instead of manually defined rules
+    - Move from rule-based analysis → data-driven prediction
+
+    - Placement Prediction
+        - Predict player performance in a match
+        - Input:
+            - Traits used
+            - Economy data
+            - Unit strength
+            - Past performance stats
+        - Output:
+            - Predicted placement (1–8)
+            OR probability of Top 4
+
+    - Loss Pattern Detection (learned version)
+        - Identify hidden patterns in losing games
+        - Detect trait combinations and economy states that lead to losses
+
+    - Playstyle Classification
+        - Automatically group players into playstyles:
+            - Aggressive
+            - Econ-focused
+            - Vertical comp focused
+            - Flexible / adaptive
+            
 ___
 ## Phase 4: Create website
 
