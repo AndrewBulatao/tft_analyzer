@@ -1,10 +1,31 @@
+# Teamfight Tactics Analyzer
+(Write here what the program does)
+- Indepth of how the ai process request
+    1) Player matches
+    2) Backend analytics
+    3) Structured JSON
+    4) AI Interpretation
+        - AI is consuming analytics, not raw user questions. That is the reason for the Large Language Model (LLM)
+    5) Personalized Report
+        - Try using OpenAI GPT-4o-mini or Google Gemini 1.5 Flash to start for testing
+___
 # Timeline of tasks:
-
-## Phase 1: Getting started
+# Phase 1: Getting started
+___
 - ~~Get riot api~~
 - ~~Be able to search player~~
 - ~~Show match history~~
 - Show their rank
+
+## Phase 1 Notes:
+- Packages needed: express, axios, dotenv, cors
+- Accessing data: express -> Axios -> Riot API
+    - Express: helps create a web server
+    - Axios: Makes http requests
+    - dotenv: allows secrets in a .env file
+        - keep api key here
+- cors: allows frontend and backend to talk to each other
+- Riot APIs uses PUUID to access multiple features
 
 - To run server locally, be in the server directory and type
     `node src/server.js`
@@ -33,25 +54,16 @@ Examples:
 
 - Get 10 recent matches played
 `curl http://localhost:3000/placements/SaltyBuddy/Salty | jq`
-
-## Notes:
-- Packages needed: express, axios, dotenv, cors
-- Accessing data: express -> Axios -> Riot API
-    - Express: helps create a web server
-    - Axios: Makes http requests
-    - dotenv: allows secrets in a .env file
-        - keep api key here
-- cors: allows frontend and backend to talk to each other
-- Riot APIs uses PUUID to access multiple features
-
---- 
+___
 
 ## Phase 2: Create database
+--- 
+
 - ~~Use mongo db~~
 - ~~Store match data into db~~
 - ~~Organize players data for next phase~~ 
 
-### Notes:
+### Phase 2 Notes:
 - Flow chart of accessing data in db
     1. Request
     2. Check MongoDB
@@ -60,10 +72,9 @@ Examples:
             a. Riot API
             b. Save to MongoDB
             c. Return data
-
---- 
-
+___
 ## Phase 3: Train data
+--- 
 - Information we want:
     - Average end level
     - Train trait data
@@ -76,18 +87,20 @@ Examples:
 - We can try using mobalytics to collect data
 `https://mobalytics.gg/builds-widget-documentation/`
 
-### Notes
+### Phase 3: Notes
 - Storage management
 Only store a player if someone searches for them (Cache-on-demand)
 - Saves Riot API calls
 - Don't have to store millions of players
 - Faster API calls
 - ***Add expiration***
+___
+## Phase 4: Create website
 
 --- 
 
-## Phase 4: Create website
 - Create a website to display
+
 ### Website features
 - Have a bar graph visualizing the players stats
     - This can also be used for most common traits used
@@ -108,8 +121,10 @@ Only store a player if someone searches for them (Cache-on-demand)
     `https://www.reddit.com/r/CompetitiveTFT/comments/1td1sy7/i_tried_to_build_a_quantitative_model_of_the_tft/`
     Actual Document:
     `https://drive.google.com/file/d/1g8yND1BGgh1P-zcUFogs5Y7v1bkfRZuK/view`
+___
+# **Getting into AI**
 
----
+--- 
 
 ## AI Integration Idea (PH Teamfight Tactics Data Analysis)
 
