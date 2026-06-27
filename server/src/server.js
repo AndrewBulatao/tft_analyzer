@@ -24,10 +24,11 @@ app.get("/", (req, res) => {
   res.send("TFT Analyzer Backend Running");
 });
 
-app.use("/export", exportRoutes);
 
 // Testing
 //app.use("/", testRoutes);
+//app.use("/export", exportRoutes);
+
 
 // Riot service route
 // Instead of putting api code, riotService will handle api req
@@ -35,6 +36,8 @@ const riotService = require("./services/riotService");
 const matchService = require("./services/matchService");
 const playerStatsService = require("./services/playerStatsService");
 
+// Export service route
+const exportService = require("./services/exportService");
 
 // -- ENDPOINTS --
 
@@ -158,4 +161,31 @@ app.get("/placements/:gameName/:tagLine", async (req, res) => {
 // Server is running
 app.listen(3000, () => {
   console.log("Server running on port 3000");
+});
+
+// -- EXPORTING TO EXCEL --
+app.get("/exportTraits/:gameName/:tagLine", async (req, res) => {
+  try {
+    const { gameName, tagLine } = req.params;
+
+    // Get player's PUUID
+    const account = await riotService.getAccountByRiotId(
+      gameName,
+      tagLine
+    );
+
+    // Generate the CSV
+    const filePath = await exportService.exportTraits(
+        account.puuid,
+        gameName
+    );
+    // Send the file to the client
+    res.download(filePath);
+
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to export traits",
+      details: err.message
+    });
+  }
 });
