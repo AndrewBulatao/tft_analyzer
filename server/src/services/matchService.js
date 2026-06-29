@@ -22,6 +22,63 @@ async function getMatchWithCache(matchId) {
   return match;
 }
 
+
+async function getFilteredMatches(
+    puuid,
+    {
+        set,
+        gameMode,
+        count = 10
+    }
+) {
+
+    const matchIds = await riotService.getMatchIds(puuid);
+
+    const matches = [];
+
+    for (const matchId of matchIds) {
+
+        const match = await getMatchWithCache(matchId);
+
+        const player = match.info.participants.find(
+            p => p.puuid === puuid
+        );
+
+        if (!player) continue;
+
+        // Check set
+        if (set) {
+
+            const firstTrait = player.traits.find(t => t.name);
+
+            const matchSet =
+                firstTrait?.name.match(/^TFT(\d+)_/)?.[1];
+
+            if (`${matchSet}` !== `${set}`) {
+                continue;
+            }
+        }
+
+        // Check gamemode
+        if (gameMode) {
+
+            // Check to see which gameMode it is
+            if (match.info.queue_id !== gameMode) {
+                continue;
+            }
+        }
+
+        matches.push(match);
+
+        if (matches.length >= count) {
+            break;
+        }
+    }
+
+    return matches;
+}
+
 module.exports = {
-  getMatchWithCache
+  getMatchWithCache,
+  getFilteredMatches
 };

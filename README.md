@@ -10,6 +10,11 @@
         - Try using OpenAI GPT-4o-mini or Google Gemini 1.5 Flash to start for testing
 
     try to predict trends. Past 100 games, this happened. Have a slider to see where improvements. Can use ai to predict future games
+
+## TODO
+- ~~Make a filter for matches based on set and gamemode that user decides~~ 
+- Continue exporting trained data into excel for checking if everything is correct
+
 ___
 # Timeline of tasks:
 # Phase 1: Getting started

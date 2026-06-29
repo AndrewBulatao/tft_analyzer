@@ -5,6 +5,12 @@ const trainingDataSchema = new mongoose.Schema({
   matchId: String,
   puuid: String,
 
+  // Set the match was played in
+  set: Number,
+
+  // Which gamemode: ranked, normal, revival, event, or PVE
+  gameMode: String,
+  
   // Basic end of match stats
   placement: Number,
   level: Number,
