@@ -13,6 +13,7 @@
 
 ## TODO
 - ~~Make a filter for matches based on set and gamemode that user decides~~ 
+- Find out how the db stores the gamemode, gametype, and set name
 - Continue exporting trained data into excel for checking if everything is correct
 
 ___
