@@ -1,13 +1,21 @@
 require("dotenv").config();
 
+// Connecting to default servers
 const express = require("express");
 const mongoose = require("mongoose");
-
 const app = express();
 
+// Routes
 const exportRoutes = require("./routes/export.routes");
-
 const testRoutes = require("./routes/test");
+
+// Services
+const riotService = require("./services/riotService");
+const matchService = require("./services/matchService");
+const playerStatsService = require("./services/playerStatsService");
+
+// Models
+const Match = require("./models/match");
 
 // Connecting to mongo
 mongoose
@@ -29,12 +37,6 @@ app.get("/", (req, res) => {
 //app.use("/", testRoutes);
 //app.use("/export", exportRoutes);
 
-
-// Riot service route
-// Instead of putting api code, riotService will handle api req
-const riotService = require("./services/riotService");
-const matchService = require("./services/matchService");
-const playerStatsService = require("./services/playerStatsService");
 
 // Export service route
 const exportService = require("./services/exportService");
@@ -68,11 +70,37 @@ app.get("/matches/:gameName/:tagLine", async (req, res) => {
 
     const matchIds = await riotService.getMatchIds(account.puuid);
 
+    // Counters for cache statistics
+    let cached = 0;
+    let downloaded = 0;
+
+
+    for (const matchId of matchIds) {
+
+      const existing = await Match.findOne({ matchId });
+
+      // For testing purposes, set log: false so it doesnt printout
+      const match = await matchService.getMatchWithCache(matchId, {
+        log: true 
+      });
+
+      if (existing) {
+        cached++;
+      } else {
+        downloaded++;
+      }
+    }
+
+    // Return a summary of the sync operation
     res.json({
       puuid: account.puuid,
+      totalMatches: matchIds.length,
+      cached,
+      downloaded,
       matchIds
     });
 
+    // Catcher
   } catch (err) {
     res.status(500).json({
       error: "Failed to fetch matches",

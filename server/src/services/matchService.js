@@ -1,13 +1,23 @@
 const Match = require("../models/Match");
 const riotService = require("./riotService");
 
-// Checker to find the match if already in the db
-async function getMatchWithCache(matchId) {
+// Checker + cache layer for match data
+async function getMatchWithCache(matchId, { log = false } = {}) {
   const existingMatch = await Match.findOne({ matchId });
 
   if (existingMatch) {
     console.log(`Cache hit: ${matchId}`);
-    return existingMatch.matchData;
+
+    const match = existingMatch.matchData;
+
+    if (log) {
+      console.log("QUEUE:", match.info.queue_id);
+      console.log("GAME TYPE:", match.info.tft_game_type);
+      console.log("VERSION:", match.info.game_version);
+      console.log("----------------------------");
+    }
+
+    return match;
   }
 
   console.log(`Cache miss: ${matchId}`);
@@ -18,6 +28,14 @@ async function getMatchWithCache(matchId) {
     matchId,
     matchData: match
   });
+
+  if (log) {
+    console.log("QUEUE:", match.info.queue_id);
+    console.log("GAME TYPE:", match.info.tft_game_type);
+    console.log("VERSION:", match.info.game_version);
+    console.log("First Trait:", player.traits[0]?.name);
+    console.log("----------------------------");
+  }
 
   return match;
 }

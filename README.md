@@ -14,6 +14,13 @@
 ## TODO
 - ~~Make a filter for matches based on set and gamemode that user decides~~ 
 - Find out how the db stores the gamemode, gametype, and set name
+    - The different queues tell you which gamemode the user is playing
+        - Ranked: 1100
+        - Normal: 1090
+        - Hyper_roll: 1130
+        - Double_up: 1150
+        - PvE: 1220
+        - Tutorial: 1105
 - Continue exporting trained data into excel for checking if everything is correct
 
 ___
