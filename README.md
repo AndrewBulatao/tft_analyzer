@@ -176,6 +176,10 @@ Only store a player if someone searches for them (Cache-on-demand)
             - Econ-focused
             - Vertical comp focused
             - Flexible / adaptive
+
+    - New var: carry weight. Determined by star level, number of items used.
+        - Determined if carry if star level and numb items are high
+        - Positive numbers = frontline unit; Negative numbers = backline unit
             
 ___
 ## Phase 4: Create website
