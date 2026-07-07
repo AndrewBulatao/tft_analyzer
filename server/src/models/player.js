@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-// Schema for the summoner searched
 const playerSchema = new mongoose.Schema({
   puuid: {
     type: String,
@@ -8,8 +7,15 @@ const playerSchema = new mongoose.Schema({
     unique: true
   },
 
-  gameName: String,
-  tagLine: String,
+  gameName: {
+    type: String,
+    required: true
+  },
+
+  tagLine: {
+    type: String,
+    required: true
+  },
 
   lastUpdated: {
     type: Date,
@@ -17,5 +23,5 @@ const playerSchema = new mongoose.Schema({
   }
 });
 
-// Export
-module.exports = mongoose.model("Player", playerSchema);
+module.exports =
+  mongoose.models.Player || mongoose.model("Player", playerSchema);

@@ -22,6 +22,7 @@
         - PvE: 1220
         - Tutorial: 1105
 - Continue exporting trained data into excel for checking if everything is correct
+- Use hugging face for ai or deepseek for cheap ai glm5-dash
 
 ___
 # Timeline of tasks:

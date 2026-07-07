@@ -1,41 +1,38 @@
 const mongoose = require("mongoose");
 
 const playerStatsSchema = new mongoose.Schema({
-  puuid: { type: String, unique: true, required: true },
-
-  totalGames: Number,
-  avgPlacement: Number,
-  top4Rate: Number,
-
-  avgLevel: Number,
-  avgGoldLeft: Number,
-  avgDamage: Number,
-
-  traitStats: {
-    type: Map,
-    of: new mongoose.Schema(
-      {
-        games: Number,
-        activeGames: Number,
-        deadGames: Number,
-        
-        tierSum: Number,
-        unitSum: Number,
-        
-        avgTier: Number,
-        avgUnits: Number,
-        activationRate: Number,
-        deadRate: Number,
-
-        winRate: Number,
-        top4Rate: Number,
-        avgPlacement: Number
-      },
-      { _id: false }
-    )
+  puuid: {
+    type: String,
+    required: true,
+    unique: true
   },
 
-  lastComputed: Date
+  totalGames: {
+    type: Number,
+    default: 0
+  },
+
+  avgPlacement: {
+    type: Number,
+    default: 0
+  },
+
+  avgLevel: {
+    type: Number,
+    default: 0
+  },
+
+  avgDamage: {
+    type: Number,
+    default: 0
+  },
+
+  lastComputed: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-module.exports = mongoose.model("PlayerStats", playerStatsSchema);
+module.exports =
+  mongoose.models.PlayerStats ||
+  mongoose.model("PlayerStats", playerStatsSchema);
