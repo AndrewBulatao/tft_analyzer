@@ -1,4 +1,4 @@
-const Match = require("../models/Match");
+const Match = require("../models/match");
 const riotService = require("./riotService");
 
 // Checker + cache layer for match data

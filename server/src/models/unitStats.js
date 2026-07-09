@@ -38,7 +38,7 @@ const unitStatsSchema = new mongoose.Schema({
     default: 0
   },
 
-  // Average star level (1★, 2★, 3★)
+  // Average star level 
   avgTier: {
     type: Number,
     default: 0
@@ -58,14 +58,19 @@ const unitStatsSchema = new mongoose.Schema({
   },
 
   // Percentage of games where this unit was identified as the carry
+  // (0 = never, 1 = always)
   carryRate: {
     type: Number,
-    default: 0
+    default: 0,
+    min: 0,
+    max: 1
   },
 
+  // Last time these statistics were updated
   lastUpdated: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+    required: true
   }
 });
 

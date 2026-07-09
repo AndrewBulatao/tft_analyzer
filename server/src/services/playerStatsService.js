@@ -1,14 +1,17 @@
 const riotService = require("../services/riotService");
 const matchService = require("../services/matchService");
+const unitStatsService = require("../services/unitStatsService");
 
 // Get stats schema
 const PlayerStats = require("../models/playerStats");
 
+// To run just need puuid
 async function getStats(puuid) {
   try {
-    // Get recent matches using puuid
+    // Try getting match IDs
     const matchIds = await riotService.getMatchIds(puuid);
 
+    // If player has 0 matches or no matchIDs, return puuid and total games = 0
     if (!matchIds || matchIds.length === 0) {
       return {
         puuid,
@@ -16,7 +19,7 @@ async function getStats(puuid) {
       };
     }
 
-    // Init vars
+    // Otherwise, init vars
     let totalGames = 0;
     let placementSum = 0;
     let top4 = 0;
@@ -25,9 +28,12 @@ async function getStats(puuid) {
     let goldSum = 0;
     let damageSum = 0;
 
-    let traitStats = {};
+    // Unit stats accumulator
+    let unitStats = {};
 
-    // Go through 10 recent matches
+
+    // Traverse through the entire matchID array, retrieve each match,
+    // and extract this player's stats from that specific match
     for (const matchId of matchIds) {
       const match = await matchService.getMatchWithCache(matchId);
 
@@ -38,9 +44,10 @@ async function getStats(puuid) {
       // We find the player
       if (!player) continue;
 
+      // GETTING PLAYER'S STATS
       totalGames++;
 
-      // Get player's placement matches
+      // Placement matches and sum
       const placement = player.placement;
       placementSum += placement;
 
@@ -51,78 +58,14 @@ async function getStats(puuid) {
       goldSum += player.gold_left || 0;
       damageSum += player.total_damage_to_players || 0;
 
-      // Getting traits usage
-      if (player.traits && Array.isArray(player.traits)) {
-
-        // IMPORTANT: prevents duplicate counting per match
-        const seenInMatch = new Set();
-
-        for (const trait of player.traits) {
-          const name = trait.name;
-
-          // Init trait stats object if it doesnt exist
-          if (!traitStats[name]) {
-            traitStats[name] = {
-              games: 0,
-              activeGames: 0,
-              deadGames: 0,
-
-              wins: 0,
-              top4s: 0,
-              placementSum: 0,
-
-              tierSum: 0,
-              unitSum: 0
-            };
-          }
-
-          const isActive = (trait.tier_current || 0) > 0;
-
-          // Count trait only once per match
-          if (!seenInMatch.has(name)) {
-            traitStats[name].games++;
-            seenInMatch.add(name);
-          }
-
-          // Active vs inactive logic
-          if (isActive) {
-
-            traitStats[name].activeGames++;
-
-            traitStats[name].tierSum += trait.tier_current || 0;
-            traitStats[name].unitSum += trait.num_units || 0;
-
-            traitStats[name].placementSum += placement;
-
-            if (placement === 1) {
-              traitStats[name].wins++;
-            }
-
-            if (placement <= 4) {
-              traitStats[name].top4s++;
-            }
-
-          } else {
-            traitStats[name].deadGames++;
-          }
-        }
-      }
+      // GETTING UNIT STATS
+      unitStatsService.processUnits(
+        unitStats,
+        player,
+        placement
+      );
     }
 
-    // Finalize trait stats
-    for (const name in traitStats) {
-      const t = traitStats[name];
-
-      t.avgTier = t.games ? t.tierSum / t.games : 0;
-      t.avgUnits = t.games ? t.unitSum / t.games : 0;
-
-      t.activationRate = t.games ? t.activeGames / t.games : 0;
-      t.deadRate = t.games ? t.deadGames / t.games : 0;
-
-      t.winRate = t.games ? t.wins / t.games : 0;
-      t.top4Rate = t.games ? t.top4s / t.games : 0;
-      t.avgPlacement = t.games ? t.placementSum / t.games : 0;
-    }
 
     // Get player stats
     const stats = {
@@ -136,10 +79,9 @@ async function getStats(puuid) {
       avgGoldLeft: totalGames ? goldSum / totalGames : 0,
       avgDamage: totalGames ? damageSum / totalGames : 0,
 
-      traitStats,
-
       lastComputed: new Date()
     };
+
 
     // update stats
     await PlayerStats.findOneAndUpdate(
