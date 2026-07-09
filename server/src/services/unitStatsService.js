@@ -14,7 +14,6 @@ function processUnits(unitStats, player, placement) {
 
     const unitName = unit.character;
 
-
     // Initialize unit stats object if it does not exist
     if (!unitStats[unitName]) {
       unitStats[unitName] = {
@@ -26,23 +25,18 @@ function processUnits(unitStats, player, placement) {
       };
     }
 
-
     // Count unit usage
     unitStats[unitName].games++;
-
 
     // Track star level
     unitStats[unitName].tierSum += unit.tier || 0;
 
-
     // Track placement
     unitStats[unitName].placementSum += placement;
-
 
     if (placement === 1) {
       unitStats[unitName].wins++;
     }
-
 
     if (placement <= 4) {
       unitStats[unitName].top4s++;
@@ -58,7 +52,6 @@ async function saveUnitStats(puuid, unitStats) {
 
     const unit = unitStats[name];
 
-
     const stats = {
       puuid,
       unitName: name,
@@ -66,34 +59,26 @@ async function saveUnitStats(puuid, unitStats) {
       games: unit.games,
       wins: unit.wins,
       top4s: unit.top4s,
-
-      avgTier: unit.games
-        ? unit.tierSum / unit.games
-        : 0,
-
-      avgPlacement: unit.games
-        ? unit.placementSum / unit.games
-        : 0,
-
-      winRate: unit.games
-        ? unit.wins / unit.games
-        : 0,
-
-      top4Rate: unit.games
-        ? unit.top4s / unit.games
-        : 0
+      
+      // Check if the unit has appeared in any games. If it has, calculate stats;
+      // otherwise, set the values to 0 to prevent division by zero.
+      avgTier: unit.games ? unit.tierSum / unit.games : 0,
+      avgPlacement: unit.games ? unit.placementSum / unit.games: 0,
+      winRate: unit.games ? unit.wins / unit.games: 0,
+      top4Rate: unit.games ? unit.top4s / unit.games: 0
     };
 
-
+    // Find the unit stats document 
+    // where the player's PUUID matches and the unit name matches
     await UnitStats.findOneAndUpdate(
       {
         puuid,
         unitName: name
       },
-      {
+      { // Update stats
         $set: stats
       },
-      {
+      { // If document doesnt exist, create new one and return new stats
         upsert: true,
         new: true
       }
