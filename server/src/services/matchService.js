@@ -33,7 +33,6 @@ async function getMatchWithCache(matchId, { log = false } = {}) {
     console.log("QUEUE:", match.info.queue_id);
     console.log("GAME TYPE:", match.info.tft_game_type);
     console.log("VERSION:", match.info.game_version);
-    console.log("First Trait:", player.traits[0]?.name);
     console.log("----------------------------");
   }
 

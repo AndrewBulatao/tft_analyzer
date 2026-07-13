@@ -14,8 +14,15 @@ const riotService = require("./services/riotService");
 const matchService = require("./services/matchService");
 const playerStatsService = require("./services/playerStatsService");
 
+
 // Models
+const Player = require("./models/player");
+const PlayerMatch = require("./models/playerMatch");
+const PlayerStats = require("./models/playerStats");
+const TraitStats = require("./models/traitStats");
+const UnitStats = require("./models/unitStats");
 const Match = require("./models/match");
+
 
 // Connecting to mongo
 mongoose
@@ -41,6 +48,21 @@ app.get("/", (req, res) => {
 // Export service route
 const exportService = require("./services/exportService");
 
+// FOR ERASING DB
+app.delete("/reset-db", async (req, res) => {
+  try {
+    await Player.deleteMany({});
+    await Match.deleteMany({});
+    await PlayerMatch.deleteMany({});
+    await PlayerStats.deleteMany({});
+    await TraitStats.deleteMany({});
+    await UnitStats.deleteMany({});
+
+    res.json({ message: "Database cleared." });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 // -- ENDPOINTS --
 
 // Getting username. Need the username and tag
@@ -185,6 +207,8 @@ app.get("/placements/:gameName/:tagLine", async (req, res) => {
     });
   }
 });
+
+// Process unit info from matches
 
 // Server is running
 app.listen(3000, () => {

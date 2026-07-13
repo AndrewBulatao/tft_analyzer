@@ -25,7 +25,7 @@ async function getStats(puuid) {
     let top4 = 0;
 
     let levelSum = 0;
-    let goldSum = 0;
+    let goldSum = 0; 
     let damageSum = 0;
 
     // Unit stats accumulator
