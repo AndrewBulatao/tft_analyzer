@@ -91,7 +91,7 @@ async function getStats(puuid) {
       },
       {
         upsert: true,
-        new: true
+        returnDocument: "after"
       }
     );
 

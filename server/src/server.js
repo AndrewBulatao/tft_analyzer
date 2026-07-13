@@ -63,6 +63,8 @@ app.delete("/reset-db", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
 // -- ENDPOINTS --
 
 // Getting username. Need the username and tag
@@ -73,6 +75,7 @@ app.get("/account/:gameName/:tagLine", async (req, res) => {
       req.params.tagLine
     );
 
+    // Output data in json
     res.json(data);
   } catch (err) {
     res.status(500).json({
@@ -143,6 +146,7 @@ app.get("/player-stats/:gameName/:tagLine", async (req, res) => {
 
     const stats = await playerStatsService.getStats(account.puuid);
 
+    // Output stats
     res.json(stats);
 
   } catch (err) {
@@ -160,6 +164,7 @@ app.get("/match/:matchId", async (req, res) => {
       req.params.matchId
     );
 
+    // Output the match
     res.json(match);
   } catch (err) {
     res.status(500).json({
@@ -192,12 +197,14 @@ app.get("/placements/:gameName/:tagLine", async (req, res) => {
         p => p.puuid === account.puuid
       );
 
+      // Add placement to array
       placements.push({
         matchId,
         placement: player.placement
       });
     }
 
+    // Output in json
     res.json(placements);
 
   } catch (err) {
