@@ -104,10 +104,11 @@ app.get("/matches/:gameName/:tagLine", async (req, res) => {
 
       const existing = await Match.findOne({ matchId });
 
-      // For testing purposes, set log: false so it doesnt printout
-      const match = await matchService.getMatchWithCache(matchId, {
-        log: true 
-      });
+      // For testing purposes. set log to true to printout
+      const match = await matchService.getMatchWithCache(
+        matchId, 
+        {log: true }
+      );
 
       if (existing) {
         cached++;
@@ -215,7 +216,8 @@ app.get("/placements/:gameName/:tagLine", async (req, res) => {
   }
 });
 
-// Process unit info from matches
+// Analyzing units used in games
+app.get("/traits/")
 
 // Server is running
 app.listen(3000, () => {

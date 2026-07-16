@@ -53,8 +53,6 @@ function processTraits(traitStats, player, placement) {
   }
 }
 
-
-
 // Calculate and save trait stats
 async function saveTraitStats(puuid, traitStats) {
 

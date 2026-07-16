@@ -83,6 +83,12 @@ async function getStats(puuid) {
     };
 
 
+    // Update trait stats
+    await unitStatsService.saveUnitStats(
+      puuid,
+      unitStats
+    );
+
     // update stats
     await PlayerStats.findOneAndUpdate(
       { puuid },
@@ -101,6 +107,7 @@ async function getStats(puuid) {
     console.error("playerStatsService error:", err);
     throw err;
   }
+
 }
 
 // Export
