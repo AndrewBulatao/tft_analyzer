@@ -13,7 +13,7 @@ const testRoutes = require("./routes/test");
 const riotService = require("./services/riotService");
 const matchService = require("./services/matchService");
 const playerStatsService = require("./services/playerStatsService");
-
+const traitStatsService = require("./services/traitService");
 
 // Models
 const Player = require("./models/player");
@@ -146,9 +146,15 @@ app.get("/player-stats/:gameName/:tagLine", async (req, res) => {
     );
 
     const stats = await playerStatsService.getStats(account.puuid);
-
+    const traitStats = await traitStatsService.getStats(account.puuid);
     // Output stats
+    res.json({
+      playerStats: stats,
+      traitStats: traitStats
+    });
+    
     res.json(stats);
+    res.json(traitStats);
 
   } catch (err) {
     res.status(500).json({
@@ -215,9 +221,6 @@ app.get("/placements/:gameName/:tagLine", async (req, res) => {
     });
   }
 });
-
-// Analyzing units used in games
-app.get("/traits/")
 
 // Server is running
 app.listen(3000, () => {

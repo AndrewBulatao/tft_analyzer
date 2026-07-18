@@ -96,7 +96,13 @@ async function saveTraitStats(puuid, traitStats) {
   }
 }
 
+async function getStats(puuid){
+  const traits = await TraitStats.find({puuid});
+  return traits;
+}
+
 module.exports = {
   processTraits,
-  saveTraitStats
+  saveTraitStats,
+  getStats
 };
