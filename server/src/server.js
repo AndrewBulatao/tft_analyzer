@@ -14,6 +14,7 @@ const riotService = require("./services/riotService");
 const matchService = require("./services/matchService");
 const playerStatsService = require("./services/playerStatsService");
 const traitStatsService = require("./services/traitService");
+const unitStatsService = require("./services/unitStatsService");
 
 // Models
 const Player = require("./models/player");
@@ -47,6 +48,7 @@ app.get("/", (req, res) => {
 
 // Export service route
 const exportService = require("./services/exportService");
+const unitStats = require("./models/unitStats");
 
 // FOR ERASING DB
 app.delete("/reset-db", async (req, res) => {
@@ -145,16 +147,15 @@ app.get("/player-stats/:gameName/:tagLine", async (req, res) => {
       tagLine
     );
 
-    const stats = await playerStatsService.getStats(account.puuid);
+    const playerStats = await playerStatsService.getStats(account.puuid);
     const traitStats = await traitStatsService.getStats(account.puuid);
+    const unitStats = await unitStatsService.getStats(account.puuid);
     // Output stats
     res.json({
-      playerStats: stats,
-      traitStats: traitStats
+      playerStats,
+      traitStats,
+      unitStats
     });
-    
-    res.json(stats);
-    res.json(traitStats);
 
   } catch (err) {
     res.status(500).json({

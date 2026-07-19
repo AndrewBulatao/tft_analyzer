@@ -12,7 +12,7 @@ function processUnits(unitStats, player, placement) {
   // Traverse through player's units in this match
   for (const unit of player.units) {
 
-    const unitName = unit.character;
+    const unitName = unit.character_id;
 
     // Initialize unit stats object if it does not exist
     if (!unitStats[unitName]) {
@@ -86,8 +86,13 @@ async function saveUnitStats(puuid, unitStats) {
   }
 }
 
+async function getStats(puuid){
+  const units = await UnitStats.find({puuid});
+  return units;
+}
 
 module.exports = {
   processUnits,
-  saveUnitStats
+  saveUnitStats,
+  getStats
 };

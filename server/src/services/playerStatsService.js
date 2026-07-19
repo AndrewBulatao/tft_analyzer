@@ -1,6 +1,7 @@
 const riotService = require("../services/riotService");
 const matchService = require("../services/matchService");
 const unitStatsService = require("../services/unitStatsService");
+const traitStatsService = require("../services/traitService");
 
 // Get stats schema
 const PlayerStats = require("../models/playerStats");
@@ -28,9 +29,9 @@ async function getStats(puuid) {
     let goldSum = 0; 
     let damageSum = 0;
 
-    // Unit stats accumulator
+    // Trait and unit stats accumulator
     let unitStats = {};
-
+    let traitStats = {};
 
     // Traverse through the entire matchID array, retrieve each match,
     // and extract this player's stats from that specific match
@@ -58,7 +59,13 @@ async function getStats(puuid) {
       goldSum += player.gold_left || 0;
       damageSum += player.total_damage_to_players || 0;
 
-      // GETTING UNIT STATS
+      // Getting trait stats
+      traitStatsService.processTraits(
+        traitStats,
+        player,
+        placement
+      );
+      // Getting unit stats
       unitStatsService.processUnits(
         unitStats,
         player,
@@ -82,8 +89,13 @@ async function getStats(puuid) {
       lastComputed: new Date()
     };
 
-
     // Update trait stats
+    await traitStatsService.saveTraitStats(
+      puuid,
+      traitStats
+    );
+     
+    // Update unit stats
     await unitStatsService.saveUnitStats(
       puuid,
       unitStats
