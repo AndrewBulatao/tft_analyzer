@@ -21,8 +21,22 @@ function processUnits(unitStats, player, placement) {
         wins: 0,
         top4s: 0,
         placementSum: 0,
-        tierSum: 0
+        tierSum: 0,
+        itemsUsed: {}
       };
+    }
+
+    // Check to see if the unit has items and how often its used
+    if (Array.isArray(unit.items)) {
+      console.log("I RUN");
+      for (const item of unit.items) {
+
+        if (!unitStats[unitName].itemsUsed[item]) {
+          unitStats[unitName].itemsUsed[item] = 0;
+        }
+
+        unitStats[unitName].itemsUsed[item]++;
+      }
     }
 
     // Count unit usage
@@ -80,7 +94,7 @@ async function saveUnitStats(puuid, unitStats) {
       },
       { // If document doesnt exist, create new one and return new stats
         upsert: true,
-        new: true
+        returnDocument: "after"
       }
     );
   }

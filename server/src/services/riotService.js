@@ -17,7 +17,7 @@ async function getAccountByRiotId(gameName, tagLine) {
 
 // Users Match Ids (By PUUID)
 async function getMatchIds(puuid) {
-  const url = `https://americas.api.riotgames.com/tft/match/v1/matches/by-puuid/${puuid}/ids?count=20`;
+  const url = `https://americas.api.riotgames.com/tft/match/v1/matches/by-puuid/${puuid}/ids?count=5`;
 
   const response = await axios.get(url, {
     headers: {

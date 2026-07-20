@@ -92,23 +92,50 @@ ___
 ## Phase 3: Train data
 --- 
 ### Stage one: Obtain information we want
+
 - Information we want:
-    - Average end level
-    - Train trait data
+    - ~~Average end level~~
+    - ~~Match information~~
+    - Most used:
+        - ~~Traits~~
+        - ~~Units~~
+        - Augments
+
+    - Trait data
         - ~~See what the most common trait the user plays~~
-            - ~~see what their win percentage is with that trait~~
-            -  **Later implementation:** See how contested they are with traits they win/lose with the trait
-        - Average time alive
-        - Detect playstyle
-            - Aggresive, vertical, flexible, econ
-        - What to play next
-            - See what they play the most and what works for them.
-            - Possibly see what comps they've lost the most against?
+        - ~~See what their win percentage is with that trait~~
+        - ~~Games played~~
+        - ~~Top 4 count~~
+        - ~~Average placement~~
+        - Activation rate
+        - ~~Average trait tier~~
+        - ~~Average number of units~~
+        - **Later implementation:** See how contested each trait is
 
-    - We can try using mobalytics to collect data
+    - Unit data
+        - ~~Most played unit~~
+        - ~~Win percentage with units~~
+        - ~~Games played~~
+        - ~~Average star level~~
+        - Items used
+            - How often an item was equipped
+            - Average number of item equipped
+        - ~~Carry rate~~
+
+    - Composition data
+        - Active traits
+        - Units played together
+        - Most common compositions
+        - Winning compositions
+
+    - Opponent data
+        - Opponent traits
+        - Opponent units
+        - Winning composition
+        - Placement against each composition
+
+    - We can try using Mobalytics to collect data
     `https://mobalytics.gg/builds-widget-documentation/`
-
----
 
 ### Stage one: Notes
 - Storage management
@@ -190,6 +217,8 @@ ___
 - Create a website to display
 
 ### Website features
+- Display users profile picture using
+`/tft/summoner/v1/summoners/by-puuid/{encryptedPUUID}`
 - Have a bar graph visualizing the players stats
     - This can also be used for most common traits used
 

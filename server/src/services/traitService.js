@@ -90,7 +90,8 @@ async function saveTraitStats(puuid, traitStats) {
         $set: stats
       },
       {
-        upsert: true
+        upsert: true,
+        returnDocument: "after"
       }
     );
   }
