@@ -117,9 +117,9 @@ ___
         - ~~Win percentage with units~~
         - ~~Games played~~
         - ~~Average star level~~
-        - Items used
-            - How often an item was equipped
-            - Average number of item equipped
+        - ~~Items used~~
+            - ~~How often an item was equipped~~
+            - ~~Average number of item equipped~~
         - ~~Carry rate~~
 
     - Composition data
@@ -128,6 +128,7 @@ ___
         - Most common compositions
         - Winning compositions
 
+    **Later implementation, focus one player for now**
     - Opponent data
         - Opponent traits
         - Opponent units

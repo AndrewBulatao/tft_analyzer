@@ -44,8 +44,6 @@ async function getStats(puuid) {
 
       // We find the player
       if (!player) continue;
-
-      // GETTING PLAYER'S STATS
       totalGames++;
 
       // Placement matches and sum
