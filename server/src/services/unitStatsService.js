@@ -26,10 +26,12 @@ function processUnits(unitStats, player, placement) {
       };
     }
 
+    //console.log(unit);
+
     // Check to see if the unit has items and how often its used
-    if (Array.isArray(unit.items)) {
+    if (Array.isArray(unit.itemNames)) {
       console.log("I RUN");
-      for (const item of unit.items) {
+      for (const item of unit.itemNames) {
 
         if (!unitStats[unitName].itemsUsed[item]) {
           unitStats[unitName].itemsUsed[item] = 0;
@@ -73,6 +75,8 @@ async function saveUnitStats(puuid, unitStats) {
       games: unit.games,
       wins: unit.wins,
       top4s: unit.top4s,
+
+      itemsUsed: unit.itemsUsed,
       
       // Check if the unit has appeared in any games. If it has, calculate stats;
       // otherwise, set the values to 0 to prevent division by zero.
