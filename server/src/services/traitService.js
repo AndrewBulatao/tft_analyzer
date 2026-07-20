@@ -17,7 +17,6 @@ function processTraits(traitStats, player, placement) {
     // Ignore empty traits
     if (!traitName) continue;
 
-
     // Initialize trait stats if it does not exist
     if (!traitStats[traitName]) {
       traitStats[traitName] = {
@@ -26,17 +25,26 @@ function processTraits(traitStats, player, placement) {
         top4s: 0,
         placementSum: 0,
         tierSum: 0,
-        unitsSum: 0
+        unitsSum: 0,
+        activeGames: 0,
+        deadGames: 0
       };
     }
-    // Count trait usage
+    // Count trait usage: Doesnt mean its active, just present
     traitStats[traitName].games++;
+    
+    // Is active or not
+    if ((trait.tier_current || 0) > 0) {
+      traitStats[traitName].activeGames++;
+    } else {
+      traitStats[traitName].deadGames++;
+    }
 
     // Track placement
     traitStats[traitName].placementSum += placement;
 
     // Track trait tier
-    traitStats[traitName].tierSum += trait.tier || 0;
+    traitStats[traitName].tierSum += trait.tier_current || 0;
 
     // Track number of units in trait
     traitStats[traitName].unitsSum += trait.num_units || 0;
@@ -71,11 +79,16 @@ async function saveTraitStats(puuid, traitStats) {
       avgPlacement: trait.games
         ? trait.placementSum / trait.games : 0,
 
+      // Average tier: Truly shows how often they play a trait
       avgTier: trait.games
         ? trait.tierSum / trait.games : 0,
 
       avgUnits: trait.games
         ? trait.unitsSum / trait.games : 0,
+
+      // Is trait active: Despite them activating it, could be filler
+      activeGames: trait.activeGames,
+      deadGames: trait.deadGames,
 
       lastComputed: new Date()
     };
