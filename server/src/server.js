@@ -180,6 +180,22 @@ app.get("/match/:matchId", async (req, res) => {
   }
 });
 
+// Get top 3 most used units and traits
+app.get("/most-played/:gameName/:tagLine", async (req,res)=>{
+  // Get account
+  try{
+    const account = await riotService.getAccountByRiotId(
+      req.params.gameName,
+      req.params.tagLine
+    );
+
+  } catch (err){
+    res.status(500).json({
+      error:"Failed to fetch most played traits and or units",
+      details: err.response?.data || err.message
+    });
+  }
+});
 // Get top 10 placements
 app.get("/placements/:gameName/:tagLine", async (req, res) => {
   try {

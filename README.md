@@ -123,10 +123,10 @@ ___
         - ~~Carry rate~~
 
     - Composition data
-        - Active traits
+        - ~~Active traits~~
         - Units played together
         - Most common compositions
-        - Winning compositions
+        - ~~Winning compositions~~
 
     **Later implementation, focus one player for now**
     - Opponent data

@@ -110,6 +110,16 @@ async function saveTraitStats(puuid, traitStats) {
   }
 }
 
+async function getMostPlayed(puuid) {
+  // Traverse through all the traits
+  const traits = await TraitStats.find({ puuid })
+    .sort({ gamesPlayed: -1 })
+    // Find the top 3 most played traits
+    .limit(3);
+
+  return traits;
+}
+
 async function getStats(puuid){
   const traits = await TraitStats.find({puuid});
   return traits;

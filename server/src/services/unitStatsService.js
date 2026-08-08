@@ -109,6 +109,16 @@ async function getStats(puuid){
   return units;
 }
 
+async function getMostPlayed(puuid){
+  // Traverse through all units
+  const units = await unitStats.find({puuid})
+    .sort({gamesPlayed: -1})
+
+    // get the top 3 most played units
+    .limit(3);
+  return units;
+}
+
 module.exports = {
   processUnits,
   saveUnitStats,
