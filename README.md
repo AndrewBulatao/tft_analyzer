@@ -13,7 +13,7 @@
 
 ## TODO
 - ~~Make a filter for matches based on set and gamemode that user decides~~ 
-- Find out how the db stores the gamemode, gametype, and set name
+- ~~Find out how the db stores the gamemode, gametype, and set name~~
     - The different queues tell you which gamemode the user is playing
         - Ranked: 1100
         - Normal: 1090
