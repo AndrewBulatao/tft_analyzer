@@ -152,7 +152,9 @@ app.get("/player-stats/:gameName/:tagLine", async (req, res) => {
     const unitStats = await unitStatsService.getStats(account.puuid);
     // Output stats
     res.json({
-      traitStats
+      playerStats,
+      traitStats,
+      unitStats
     });
 
   } catch (err) {

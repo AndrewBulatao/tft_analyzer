@@ -17,18 +17,24 @@ form.addEventListener("submit", function(event) {
     const gameName = parts[0];
     const tagLine = parts[1];
 
+    console.log("Game Name:", gameName);
+    console.log("Tag Line:", tagLine);
+
     // Try to find the player
-    try {
-
-        // TODO: Call backend API
-
-        // If successful, go to stats screen
-        window.location.href = "stats.html";
+   try {
+    const response = await fetch(
+        `http://localhost:3000/player-stats/${gameName}/${tagLine}`
+    );
+    if (!response.ok) {
+        throw new Error("Player not found");
+    }
+    const data = await response.json();
+    //console.log(data);
 
     } catch (error) {
 
-        // TODO: Display error to user
-        console.log("Player not found:", error);
+        console.error("Error:", error);
+
     }
 
 });

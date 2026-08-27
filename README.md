@@ -215,13 +215,44 @@ ___
 
 --- 
 
-- Create a website to display
-
-### Website features
+- There will be two pages: Home and Stats
+- Design Ideas:
+        - Dark blue and yellow
+        - Or Dark blue and lava pink gradient
+## Website features
+### General
+- Have socials in bottom of page:
+        - LinkekIn
+        - Portfolio
+        - Online Portfolio
+        - Instagram 
+___
+## Tabs
+----
+#### Home
+- Search Bar
+    - When searching, have drop down that show players in db that are similar
+---
+#### Stats
 - Display users profile picture using
 `/tft/summoner/v1/summoners/by-puuid/{encryptedPUUID}`
-- Have a bar graph visualizing the players stats
-    - This can also be used for most common traits used
+- Will show first 10 recent matches (all gamemodes) until different gamemode tab used
+- General user stats:
+    - Top 3 used traits, and units
+- Matches will display:
+    - When played
+    - Gamemode
+    - Units played
+    - Placement
+    - Average placement & Time - Avg for all games played that day (**Later implementation**)
+        - If different gamemodes played on same day, group them together and then do averages
+    - Win/Loses
+        - Same logic as average placement and time
+- Have tabs to show different gamemodes:
+    - Ranked tab will be unique. 
+        - Have a line graph visualizing the players LP
+        
+
 
 --- 
 
