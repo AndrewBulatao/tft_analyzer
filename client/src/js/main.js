@@ -3,7 +3,7 @@ const form = document.getElementById("player-search");
 const input = document.getElementById("riot-id");
 
 // Get action of clicking/submitting the form
-form.addEventListener("submit", function(event) {
+form.addEventListener("submit", async function(event) {
 
     // Prevent the page from refreshing
     event.preventDefault();
@@ -21,19 +21,31 @@ form.addEventListener("submit", function(event) {
     console.log("Tag Line:", tagLine);
 
     // Try to find the player
-   try {
-    const response = await fetch(
-        `http://localhost:3000/player-stats/${gameName}/${tagLine}`
-    );
-    if (!response.ok) {
-        throw new Error("Player not found");
-    }
-    const data = await response.json();
-    //console.log(data);
+    try {
 
+        const response = await fetch(
+            `http://127.0.0.1:3000/player-stats/${gameName}/${tagLine}`
+            );
+
+        console.log("HTTP Status:", response.status);
+
+        if (!response.ok) {
+            throw new Error(
+                `Server returned ${response.status} ${response.statusText}`
+            );
+        }
+        const data = await response.json();
+        console.log("Data received:", data);
+
+        // If success, go to stats page
+        window.location.href =
+            `stats.html?gameName=${gameName}&tagLine=${tagLine}`;
     } catch (error) {
-
-        console.error("Error:", error);
+        console.error("Failed to fetch player stats");
+        console.error("Game Name:", gameName);
+        console.error("Tag Line:", tagLine);
+        console.error("Error:", error.name);
+        console.error("Message:", error.message);
 
     }
 
