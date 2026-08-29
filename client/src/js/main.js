@@ -1,10 +1,16 @@
 // Make search bar look up user
+
+// Elements on page to track
 const form = document.getElementById("player-search");
 const input = document.getElementById("riot-id");
+const errorMessage = document.getElementById("error-message");
 
 // Get action of clicking/submitting the form
 form.addEventListener("submit", async function(event) {
 
+    // Reset the error display in case user tries again
+    
+    errorMessage.style.display = "none";
     // Prevent the page from refreshing
     event.preventDefault();
 
@@ -40,6 +46,7 @@ form.addEventListener("submit", async function(event) {
         // If success, go to stats page
         window.location.href =
             `stats.html?gameName=${gameName}&tagLine=${tagLine}`;
+
     } catch (error) {
         console.error("Failed to fetch player stats");
         console.error("Game Name:", gameName);
@@ -47,6 +54,9 @@ form.addEventListener("submit", async function(event) {
         console.error("Error:", error.name);
         console.error("Message:", error.message);
 
+        // Show error message
+        errorMessage.textContent = "Player not found.";
+        errorMessage.style.display = "block";
     }
 
 });
