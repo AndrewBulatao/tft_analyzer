@@ -4,12 +4,12 @@
 const form = document.getElementById("player-search");
 const input = document.getElementById("riot-id");
 const errorMessage = document.getElementById("error-message");
+const loadingCircle = document.getElementById("loading-circle");
 
 // Get action of clicking/submitting the form
 form.addEventListener("submit", async function(event) {
-
+    loadingCircle.style.display = "block";
     // Reset the error display in case user tries again
-    
     errorMessage.style.display = "none";
     // Prevent the page from refreshing
     event.preventDefault();
@@ -28,7 +28,6 @@ form.addEventListener("submit", async function(event) {
 
     // Try to find the player
     try {
-
         const response = await fetch(
             `http://127.0.0.1:3000/player-stats/${gameName}/${tagLine}`
             );
@@ -57,6 +56,7 @@ form.addEventListener("submit", async function(event) {
         // Show error message
         errorMessage.textContent = "Player not found.";
         errorMessage.style.display = "block";
+        loadingCircle.style.display = "none";
     }
 
 });
