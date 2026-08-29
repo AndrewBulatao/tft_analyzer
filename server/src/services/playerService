@@ -1,3 +1,4 @@
+// Gets summoner name and inserts in db
 const Player = require("../models/player");
 const riotService = require("./riotService");
 

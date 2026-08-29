@@ -1,3 +1,6 @@
+// Gets all of match data (not filtered or analyzed)
+// DOES NOT upload into database
+
 const Match = require("../models/match");
 const riotService = require("./riotService");
 
@@ -38,7 +41,6 @@ async function getMatchWithCache(matchId, { log = false } = {}) {
 
   return match;
 }
-
 
 async function getFilteredMatches(
     puuid,
@@ -91,7 +93,6 @@ async function getFilteredMatches(
             break;
         }
     }
-
     return matches;
 }
 

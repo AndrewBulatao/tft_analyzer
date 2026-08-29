@@ -222,7 +222,7 @@ ___
 ## Website features
 ### General
 - Have socials in bottom of page:
-        - LinkekIn
+        - LinkedIn
         - Portfolio
         - Online Portfolio
         - Instagram 

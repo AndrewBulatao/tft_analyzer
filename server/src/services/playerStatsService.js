@@ -1,3 +1,5 @@
+// Analyzes ALL given match data of player of interest
+// Uploads to database
 const riotService = require("../services/riotService");
 const matchService = require("../services/matchService");
 const unitStatsService = require("../services/unitStatsService");

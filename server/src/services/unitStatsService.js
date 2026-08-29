@@ -1,5 +1,6 @@
+// Gets stats of units of player in interest
+// Uploads to database
 const UnitStats = require("../models/unitStats");
-
 
 // Process unit stats from a single match
 function processUnits(unitStats, player, placement) {
@@ -30,7 +31,6 @@ function processUnits(unitStats, player, placement) {
 
     // Check to see if the unit has items and how often its used
     if (Array.isArray(unit.itemNames)) {
-      console.log("I RUN");
       for (const item of unit.itemNames) {
 
         if (!unitStats[unitName].itemsUsed[item]) {

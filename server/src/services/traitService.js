@@ -1,5 +1,6 @@
+// Gets all the stats of the traits of player in interest
+// Uploads to database
 const TraitStats = require("../models/traitStats");
-
 
 // Process trait stats from a single match
 function processTraits(traitStats, player, placement) {
