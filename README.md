@@ -232,6 +232,17 @@ ___
 #### Home
 - Search Bar
     - When searching, have drop down that show players in db that are similar
+- About page
+- Recent Searches
+---
+#### CSS ideas
+- Use this website for css design stuff
+    - `https://prismic.io/blog/css-background-effects`
+    - Interesting designs: 
+        - #5 Color Drip
+        - #13 Scroll-driven scroll-snapping animations
+        - #22 SVG Animation
+        - #28 CSS Wavy Animation
 ---
 #### Stats
 - Display users profile picture using
