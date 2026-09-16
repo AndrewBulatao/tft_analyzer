@@ -1,57 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>TFT Analyzer</title>
-
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/stats.css">
 </head>
-
 <body>
-
-    <!-- Main Header -->
-    <header>
-        <h1>Stats</h1>
-        <p id="header_summoner"></p>
-    </header>
-
-    <!-- Main Menu -->
-    <main>
-
-        <section id="search-section">
-
-            <h2>Find Summoner</h2>
-
-            <form id="player-search">
-
-                <label for="game-name"></label>
-                <input
-                    type="text"
-                    id="riot-id"
-                    name="riot-id"
-                    placeholder="Enter Riot ID, ie. player#NA1"
-                    required
-                >
-
-                <button type="submit">
-                    Search
-                </button>
-                <p id="error-message">Error</p>
-
-
-
-            </form>
-
-        </section>
-
-    </main>
-
-    <!-- JavaScript -->
-    <script src="js/main.js"></script>
-
+<!-- STATS SECTION -->
+    <section id="stats">
+        <div class="stats-content">
+            <header class="stats-header">
+                <h1>Stats</h1>
+                <p id="header_summoner"></p>
+            </header>
+            <section id="overview">
+                <div class="stat-card">
+                    <h2>Total Games</h2>
+                    <p id="total-games">-</p>
+                </div>
+                <div class="stat-card">
+                    <h2>Average Placement</h2>
+                    <p id="average-placement">-</p>
+                </div>
+                <div class="stat-card">
+                    <h2>Top 4 Rate</h2>
+                    <p id="top-four-rate">-</p>
+                </div>
+                <div class="stat-card">
+                    <h2>Average Level</h2>
+                    <p id="average-level">-</p>
+                </div>
+                <div class="stat-card">
+                    <h2>Average Gold</h2>
+                    <p id="average-gold">-</p>
+                </div>
+                <div class="stat-card">
+                    <h2>Average Damage</h2>
+                    <p id="average-damage">-</p>
+                </div>
+            </section>
+        </div>
+    </section>
+<!-- JavaScript -->
+    <script src="js/stats.js"></script>
 </body>
-
 </html>

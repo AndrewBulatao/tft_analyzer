@@ -1,35 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>TFT Analyzer</title>
-
     <!-- STYLES -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/home.css">
 </head>
-
 <body>
-
-    <!-- Main Header -->
-    <header>
-        <h1>TFT Analyzer</h1>
-        <p>Analyze your Teamfight Tactics games.</p>
-    </header>
-
-    <!-- Main Menu -->
-    <main>
-
-        <section id="search-section">
-
-            <h2>Find Summoner</h2>
-
+<!-- HOME SECTION -->
+    <section id="home">
+        <div class="stars"></div>
+        <div class="home-content">
+            <h1>TFT Analyzer</h1>
+            <p>Analyze your Teamfight Tactics games.</p>
             <form id="player-search">
-
-                <label for="game-name"></label>
+                <label for="riot-id"></label>
                 <input
                     type="text"
                     id="riot-id"
@@ -37,25 +25,15 @@
                     placeholder="Enter Riot ID, ie. player#NA1"
                     required
                 >
-
                 <button type="submit">
                     Search
                 </button>
                 <div id="loading-circle"></div>
-                
-                <p id="error-message">Error</p>
-
-
-
+                <p id="error-message"></p>
             </form>
-
-        </section>
-
-    </main>
-
-    <!-- JavaScript -->
+        </div>
+    </section>
+<!-- JavaScript -->
     <script src="js/main.js"></script>
-
 </body>
-
 </html>
