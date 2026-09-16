@@ -1,9 +1,21 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: Arial,sans-serif;
+  font-family: 'Beaufort',sans-serif;
   color: #dce7e3;
 }
+
+@font-face {
+  font-family: 'Beaufort';
+  src: url('../fonts/Beaufort-Regular.ttf') format('truetype');
+  font-weight: normal;
+}
+@font-face {
+  font-family: 'Beaufort';
+  src: url('../fonts/Beaufort-Bold.ttf') format('truetype');
+  font-weight: bold;
+}
+
 #error-message {
   color: #f5bd72;
   display: none;
