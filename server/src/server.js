@@ -150,8 +150,8 @@ app.get("/player-stats/:gameName/:tagLine", async (req, res) => {
     );
 
     const playerStats = await playerStatsService.getStats(account.puuid);
-    const traitStats = await traitStatsService.getStats(account.puuid);
-    const unitStats = await unitStatsService.getStats(account.puuid);
+    //const traitStats = await traitStatsService.getStats(account.puuid);
+    //const unitStats = await unitStatsService.getStats(account.puuid);
     // Output stats
     res.json({
       playerStats,
