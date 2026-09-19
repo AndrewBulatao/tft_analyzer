@@ -27,6 +27,16 @@ const playerStatsSchema = new mongoose.Schema({
     default: 0
   },
 
+  avgGoldLeft: {
+  type: Number,
+  default: 0
+  },
+
+  top4Rate: {
+  type: Number,
+  default: 0
+  },
+  
   lastComputed: {
     type: Date,
     default: Date.now
