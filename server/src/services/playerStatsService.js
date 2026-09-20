@@ -58,13 +58,14 @@ async function getStats(puuid) {
       levelSum += player.level || 0;
       goldSum += player.gold_left || 0;
       damageSum += player.total_damage_to_players || 0;
-
+      
       // Getting trait stats
       traitStatsService.processTraits(
         traitStats,
         player,
         placement
       );
+
       // Getting unit stats
       unitStatsService.processUnits(
         unitStats,
