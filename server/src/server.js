@@ -89,55 +89,6 @@ app.get("/account/:gameName/:tagLine", async (req, res) => {
   }
 });
 
-// Getting match IDs by PUUID
-app.get("/matches/:gameName/:tagLine", async (req, res) => {
-  try {
-    const account = await riotService.getAccountByRiotId(
-      req.params.gameName,
-      req.params.tagLine
-    );
-
-    const matchIds = await riotService.getMatchIds(account.puuid);
-
-    // Counters for cache statistics
-    let cached = 0;
-    let downloaded = 0;
-
-
-    for (const matchId of matchIds) {
-
-      const existing = await Match.findOne({ matchId });
-
-      // For testing purposes. set log to true to printout
-      const match = await matchService.getMatchWithCache(
-        matchId, 
-        {log: true }
-      );
-
-      if (existing) {
-        cached++;
-      } else {
-        downloaded++;
-      }
-    }
-
-    // Return a summary of the sync operation
-    res.json({
-      puuid: account.puuid,
-      totalMatches: matchIds.length,
-      cached,
-      downloaded,
-      matchIds
-    });
-
-    // Catcher
-  } catch (err) {
-    res.status(500).json({
-      error: "Failed to fetch matches",
-      details: err.response?.data || err.message
-    });
-  }
-});
 
 // Printing out player stats
 app.get("/player-stats/:gameName/:tagLine", async (req, res) => {
@@ -163,6 +114,27 @@ app.get("/player-stats/:gameName/:tagLine", async (req, res) => {
     res.status(500).json({
       error: "Failed to fetch player stats",
       details: err.message
+    });
+  }
+});
+
+// Getting individual match stats
+app.get("/match-stats/:gameName/:tagLine", async (req, res) => {
+  try {
+    const { gameName, tagLine } = req.params;
+    // Get account
+    const account = await riotService.getAccountByRiotId(
+      gameName,
+      tagLine
+    );
+    // Get player's match stats
+    const matches = await playerStatsService.getMatchStats(account.puuid);
+    // Output match stats
+    res.json(matches);
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to fetch match stats",
+      details: err.response?.data || err.message
     });
   }
 });
@@ -200,6 +172,7 @@ app.get("/most-played/:gameName/:tagLine", async (req,res)=>{
     });
   }
 });
+
 // Get top 10 placements
 app.get("/placements/:gameName/:tagLine", async (req, res) => {
   try {

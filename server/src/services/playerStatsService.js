@@ -123,7 +123,41 @@ async function getStats(puuid) {
 
 }
 
+// Get Match Stats
+async function getMatchStats(puuid) {
+  const matchIds = await riotService.getMatchIds(puuid);
+  // If we get no match IDs
+  if (!matchIds || matchIds.length === 0) {
+    return [];
+  }
+
+  const matches = [];
+  for (const matchId of matchIds) {
+    const match = await matchService.getMatchWithCache(matchId);
+
+    // Find summoner in list of players
+    const player = match.info.participants.find(
+      p => p.puuid === puuid
+    );
+    if (!player) continue;
+
+    // Push out the info
+    matches.push({
+      matchId,
+      placement: player.placement,
+      level: player.level,
+      goldLeft: player.gold_left,
+      damage: player.total_damage_to_players,
+      gameVersion: match.info.game_version,
+      traits: player.traits,
+      units: player.units
+    });
+  }
+  return matches;
+}
+
 // Export
 module.exports = {
-  getStats
+  getStats,
+  getMatchStats
 };
