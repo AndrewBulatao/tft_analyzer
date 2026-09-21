@@ -132,6 +132,7 @@ async function getMatchStats(puuid) {
   }
 
   const matches = [];
+
   for (const matchId of matchIds) {
     const match = await matchService.getMatchWithCache(matchId);
 
@@ -140,7 +141,7 @@ async function getMatchStats(puuid) {
       p => p.puuid === puuid
     );
     if (!player) continue;
-
+    
     // Push out the info
     matches.push({
       matchId,
@@ -148,7 +149,11 @@ async function getMatchStats(puuid) {
       level: player.level,
       goldLeft: player.gold_left,
       damage: player.total_damage_to_players,
+      timeAlive: player.time_eliminated,
+      gameLength: match.info.game_length,
       gameVersion: match.info.game_version,
+      queueId: match.info.queue_id,
+      gameType: match.info.tft_game_type,
       traits: player.traits,
       units: player.units
     });
