@@ -7,7 +7,7 @@ const riotService = require("./riotService");
 // Checker + cache layer for match data
 async function getMatchWithCache(matchId, { log = false } = {}) {
   const existingMatch = await Match.findOne({ matchId });
-
+  
   if (existingMatch) {
     console.log(`Cache hit: ${matchId}`);
 
