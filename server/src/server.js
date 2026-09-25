@@ -4,6 +4,8 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
+const cors = require("cors");
+app.use(cors());
 
 // Routes
 const exportRoutes = require("./routes/export.routes");
@@ -87,55 +89,6 @@ app.get("/account/:gameName/:tagLine", async (req, res) => {
   }
 });
 
-// Getting match IDs by PUUID
-app.get("/matches/:gameName/:tagLine", async (req, res) => {
-  try {
-    const account = await riotService.getAccountByRiotId(
-      req.params.gameName,
-      req.params.tagLine
-    );
-
-    const matchIds = await riotService.getMatchIds(account.puuid);
-
-    // Counters for cache statistics
-    let cached = 0;
-    let downloaded = 0;
-
-
-    for (const matchId of matchIds) {
-
-      const existing = await Match.findOne({ matchId });
-
-      // For testing purposes. set log to true to printout
-      const match = await matchService.getMatchWithCache(
-        matchId, 
-        {log: true }
-      );
-
-      if (existing) {
-        cached++;
-      } else {
-        downloaded++;
-      }
-    }
-
-    // Return a summary of the sync operation
-    res.json({
-      puuid: account.puuid,
-      totalMatches: matchIds.length,
-      cached,
-      downloaded,
-      matchIds
-    });
-
-    // Catcher
-  } catch (err) {
-    res.status(500).json({
-      error: "Failed to fetch matches",
-      details: err.response?.data || err.message
-    });
-  }
-});
 
 // Printing out player stats
 app.get("/player-stats/:gameName/:tagLine", async (req, res) => {
@@ -152,6 +105,8 @@ app.get("/player-stats/:gameName/:tagLine", async (req, res) => {
     const unitStats = await unitStatsService.getStats(account.puuid);
     // Output stats
     res.json({
+      playerStats,
+      traitStats,
       unitStats
     });
 
@@ -159,6 +114,27 @@ app.get("/player-stats/:gameName/:tagLine", async (req, res) => {
     res.status(500).json({
       error: "Failed to fetch player stats",
       details: err.message
+    });
+  }
+});
+
+// Getting individual match stats
+app.get("/match-stats/:gameName/:tagLine", async (req, res) => {
+  try {
+    const { gameName, tagLine } = req.params;
+    // Get account
+    const account = await riotService.getAccountByRiotId(
+      gameName,
+      tagLine
+    );
+    // Get player's match stats
+    const matches = await playerStatsService.getMatchStats(account.puuid);
+    // Output match stats
+    res.json(matches);
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to fetch match stats",
+      details: err.response?.data || err.message
     });
   }
 });
@@ -175,6 +151,23 @@ app.get("/match/:matchId", async (req, res) => {
   } catch (err) {
     res.status(500).json({
       error: "Failed to fetch match details",
+      details: err.response?.data || err.message
+    });
+  }
+});
+
+// Get top 3 most used units and traits
+app.get("/most-played/:gameName/:tagLine", async (req,res)=>{
+  // Get account
+  try{
+    const account = await riotService.getAccountByRiotId(
+      req.params.gameName,
+      req.params.tagLine
+    );
+
+  } catch (err){
+    res.status(500).json({
+      error:"Failed to fetch most played traits and or units",
       details: err.response?.data || err.message
     });
   }

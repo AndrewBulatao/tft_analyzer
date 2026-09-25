@@ -1,3 +1,5 @@
+// Analyzes ALL given match data of player of interest
+// Uploads to database
 const riotService = require("../services/riotService");
 const matchService = require("../services/matchService");
 const unitStatsService = require("../services/unitStatsService");
@@ -56,13 +58,14 @@ async function getStats(puuid) {
       levelSum += player.level || 0;
       goldSum += player.gold_left || 0;
       damageSum += player.total_damage_to_players || 0;
-
+      
       // Getting trait stats
       traitStatsService.processTraits(
         traitStats,
         player,
         placement
       );
+
       // Getting unit stats
       unitStatsService.processUnits(
         unitStats,
@@ -120,7 +123,46 @@ async function getStats(puuid) {
 
 }
 
+// Get Match Stats
+async function getMatchStats(puuid) {
+  const matchIds = await riotService.getMatchIds(puuid);
+  // If we get no match IDs
+  if (!matchIds || matchIds.length === 0) {
+    return [];
+  }
+
+  const matches = [];
+
+  for (const matchId of matchIds) {
+    const match = await matchService.getMatchWithCache(matchId);
+
+    // Find summoner in list of players
+    const player = match.info.participants.find(
+      p => p.puuid === puuid
+    );
+    if (!player) continue;
+    
+    // Push out the info
+    matches.push({
+      matchId,
+      placement: player.placement,
+      level: player.level,
+      goldLeft: player.gold_left,
+      damage: player.total_damage_to_players,
+      timeAlive: player.time_eliminated,
+      gameLength: match.info.game_length,
+      gameVersion: match.info.game_version,
+      queueId: match.info.queue_id,
+      gameType: match.info.tft_game_type,
+      traits: player.traits,
+      units: player.units
+    });
+  }
+  return matches;
+}
+
 // Export
 module.exports = {
-  getStats
+  getStats,
+  getMatchStats
 };

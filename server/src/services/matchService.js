@@ -1,10 +1,13 @@
+// Gets all of match data (not filtered or analyzed)
+// DOES NOT upload into database
+
 const Match = require("../models/match");
 const riotService = require("./riotService");
 
 // Checker + cache layer for match data
 async function getMatchWithCache(matchId, { log = false } = {}) {
   const existingMatch = await Match.findOne({ matchId });
-
+  
   if (existingMatch) {
     console.log(`Cache hit: ${matchId}`);
 
@@ -38,7 +41,6 @@ async function getMatchWithCache(matchId, { log = false } = {}) {
 
   return match;
 }
-
 
 async function getFilteredMatches(
     puuid,
@@ -91,7 +93,6 @@ async function getFilteredMatches(
             break;
         }
     }
-
     return matches;
 }
 
