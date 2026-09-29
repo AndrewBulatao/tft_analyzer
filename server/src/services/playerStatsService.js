@@ -1,9 +1,11 @@
 // Analyzes ALL given match data of player of interest
 // Uploads to database
+
 const riotService = require("../services/riotService");
 const matchService = require("../services/matchService");
 const unitStatsService = require("../services/unitStatsService");
 const traitStatsService = require("../services/traitService");
+const tftDataService = require("../services/tftDataService");
 
 // Get stats schema
 const PlayerStats = require("../models/playerStats");
@@ -26,9 +28,8 @@ async function getStats(puuid) {
     let totalGames = 0;
     let placementSum = 0;
     let top4 = 0;
-
     let levelSum = 0;
-    let goldSum = 0; 
+    let goldSum = 0;
     let damageSum = 0;
 
     // Trait and unit stats accumulator
@@ -39,13 +40,13 @@ async function getStats(puuid) {
     // and extract this player's stats from that specific match
     for (const matchId of matchIds) {
       const match = await matchService.getMatchWithCache(matchId);
-
       const player = match.info.participants.find(
         (p) => p.puuid === puuid
       );
 
       // We find the player
       if (!player) continue;
+
       totalGames++;
 
       // Placement matches and sum
@@ -58,7 +59,7 @@ async function getStats(puuid) {
       levelSum += player.level || 0;
       goldSum += player.gold_left || 0;
       damageSum += player.total_damage_to_players || 0;
-      
+
       // Getting trait stats
       traitStatsService.processTraits(
         traitStats,
@@ -74,19 +75,15 @@ async function getStats(puuid) {
       );
     }
 
-
     // Get player stats
     const stats = {
       puuid,
       totalGames,
-
       avgPlacement: totalGames ? placementSum / totalGames : 0,
       top4Rate: totalGames ? top4 / totalGames : 0,
-
       avgLevel: totalGames ? levelSum / totalGames : 0,
       avgGoldLeft: totalGames ? goldSum / totalGames : 0,
       avgDamage: totalGames ? damageSum / totalGames : 0,
-
       lastComputed: new Date()
     };
 
@@ -95,7 +92,7 @@ async function getStats(puuid) {
       puuid,
       traitStats
     );
-     
+
     // Update unit stats
     await unitStatsService.saveUnitStats(
       puuid,
@@ -115,17 +112,16 @@ async function getStats(puuid) {
     );
 
     return stats;
-
   } catch (err) {
     console.error("playerStatsService error:", err);
     throw err;
   }
-
 }
 
 // Get Match Stats
 async function getMatchStats(puuid) {
   const matchIds = await riotService.getMatchIds(puuid);
+
   // If we get no match IDs
   if (!matchIds || matchIds.length === 0) {
     return [];
@@ -140,8 +136,25 @@ async function getMatchStats(puuid) {
     const player = match.info.participants.find(
       p => p.puuid === puuid
     );
+
     if (!player) continue;
-    
+
+    // Get unit information and image URLs
+    const units = player.units.map((unit) => {
+      console.log("UNIT:", unit);
+
+      const imageUrl = tftDataService.getChampionImageUrl(
+        unit.character_id
+      );
+
+      console.log("IMAGE URL:", imageUrl);
+
+      return {
+        ...unit,
+        imageUrl
+      };
+    });
+
     // Push out the info
     matches.push({
       matchId,
@@ -155,9 +168,10 @@ async function getMatchStats(puuid) {
       queueId: match.info.queue_id,
       gameType: match.info.tft_game_type,
       traits: player.traits,
-      units: player.units
+      units
     });
   }
+
   return matches;
 }
 
@@ -166,3 +180,4 @@ module.exports = {
   getStats,
   getMatchStats
 };
+
