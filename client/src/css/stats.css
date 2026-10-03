@@ -286,3 +286,17 @@
     gap: 15px;
   }
 }
+
+/*Units Image*/
+.unit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.unit-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+}

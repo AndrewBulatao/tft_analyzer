@@ -34,9 +34,13 @@ async function loadMatches() {
     if (!response.ok) {
       throw new Error("Failed to fetch match stats");
     }
+
     const matches = await response.json();
+    console.log("MATCH DATA:", matches);
+
     const matchesList = document.querySelector("#matches-list");
     matchesList.innerHTML = "";
+
     matches.forEach((match) => {
       const matchCard = document.createElement("div");
       matchCard.classList.add("match-card");
@@ -80,6 +84,7 @@ async function loadMatches() {
           <div class="unit-list">
             ${match.units.map(unit => `
               <div class="unit">
+                <img class="unit-image" src="${unit.imageUrl}" alt="${unit.character_id}">
                 <span class="unit-name">${unit.character_id}</span>
                 <span class="unit-tier">${"★".repeat(unit.tier || 0)}</span>
                 <span class="unit-items">${(unit.itemNames || []).join(" ")}</span>
