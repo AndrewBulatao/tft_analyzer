@@ -84,9 +84,11 @@ async function loadMatches() {
           <div class="unit-list">
             ${match.units.map(unit => `
               <div class="unit">
-                <img class="unit-image" src="${unit.imageUrl}" alt="${unit.character_id}">
-                <span class="unit-name">${unit.character_id}</span>
-                <span class="unit-tier">${"★".repeat(unit.tier || 0)}</span>
+                <div class="unit-image-container">
+                  <img class="unit-image" src="${unit.imageUrl}" alt="${unit.name || unit.character_id}">
+                  <span class="unit-tier ${unit.tier === 1 ? "one-star" : unit.tier === 2 ? "two-star" : unit.tier === 3 ? "three-star" : ""}">${"★".repeat(unit.tier || 0)}</span>
+                </div>
+                <span class="unit-name">${unit.name || unit.character_id.replace(/^DA_/, "").replace(/^18_/, "").replace(/18$/, "")}</span>
                 <span class="unit-items">${(unit.itemNames || []).join(" ")}</span>
               </div>
             `).join("")}
