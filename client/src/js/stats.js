@@ -29,18 +29,15 @@ async function loadStats() {
 }
 
 async function loadMatches() {
-  try {
+try {
     const response = await fetch(`http://localhost:3000/match-stats/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`);
     if (!response.ok) {
-      throw new Error("Failed to fetch match stats");
+        throw new Error("Failed to fetch match stats");
     }
-
     const matches = await response.json();
     console.log("MATCH DATA:", matches);
-
     const matchesList = document.querySelector("#matches-list");
     matchesList.innerHTML = "";
-
     matches.forEach((match) => {
       const matchCard = document.createElement("div");
       matchCard.classList.add("match-card");
@@ -89,7 +86,11 @@ async function loadMatches() {
                   <span class="unit-tier ${unit.tier === 1 ? "one-star" : unit.tier === 2 ? "two-star" : unit.tier === 3 ? "three-star" : ""}">${"★".repeat(unit.tier || 0)}</span>
                 </div>
                 <span class="unit-name">${unit.name || unit.character_id.replace(/^DA_/, "").replace(/^18_/, "").replace(/18$/, "")}</span>
-                <span class="unit-items">${(unit.itemNames || []).join(" ")}</span>
+                <div class="unit-items">
+                  ${(unit.items || []).map(item => `
+                    <img class="item-image" src="${item.imageUrl}" alt="${item.name}" title="${item.name}">
+                  `).join("")}
+                </div>
               </div>
             `).join("")}
           </div>

@@ -100,8 +100,13 @@ async function getItem(id, gameVersion) {
     "tft-item",
     gameVersion
   );
-
-  return items[id] || null;
+  const item = Object.values(items).find(
+    item => item.id === id
+  );
+  console.log("GET ITEM ID:", id);
+  console.log("GET ITEM VERSION:", gameVersion);
+  console.log("ITEM EXISTS:", !!item);
+  return item || null;
 }
 
 // Get trait information

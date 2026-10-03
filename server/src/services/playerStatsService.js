@@ -15,7 +15,6 @@ async function getStats(puuid) {
   try {
     // Try getting match IDs
     const matchIds = await riotService.getMatchIds(puuid);
-
     // If player has 0 matches or no matchIDs, return puuid and total games = 0
     if (!matchIds || matchIds.length === 0) {
       return {
@@ -46,15 +45,12 @@ async function getStats(puuid) {
 
       // We find the player
       if (!player) continue;
-
       totalGames++;
 
       // Placement matches and sum
       const placement = player.placement;
       placementSum += placement;
-
       if (placement <= 4) top4++;
-
       // End game stats
       levelSum += player.level || 0;
       goldSum += player.gold_left || 0;
@@ -110,7 +106,6 @@ async function getStats(puuid) {
         returnDocument: "after"
       }
     );
-
     return stats;
   } catch (err) {
     console.error("playerStatsService error:", err);
@@ -121,40 +116,48 @@ async function getStats(puuid) {
 // Get Match Stats
 async function getMatchStats(puuid) {
   const matchIds = await riotService.getMatchIds(puuid);
-
   // If we get no match IDs
   if (!matchIds || matchIds.length === 0) {
     return [];
   }
 
   const matches = [];
-
   for (const matchId of matchIds) {
     const match = await matchService.getMatchWithCache(matchId);
-
     // Find summoner in list of players
     const player = match.info.participants.find(
       p => p.puuid === puuid
     );
 
     if (!player) continue;
-
+    
     // Get unit information and image URLs
-    const units = player.units.map((unit) => {
-      console.log("UNIT:", unit);
-
+    const units = await Promise.all(player.units.map(async (unit) => {
       const imageUrl = tftDataService.getChampionImageUrl(
         unit.character_id
       );
-
-      console.log("IMAGE URL:", imageUrl);
-
+      const items = await Promise.all((unit.itemNames || []).map(async (itemId) => {
+        const item = await tftDataService.getItem(
+          itemId,
+          match.info.game_version
+        );
+        if (!item) return null;
+        return {
+          id: item.id,
+          name: item.name,
+          imageUrl: await tftDataService.getImageUrl(
+            item.image.group,
+            item.image.full,
+            match.info.game_version
+          )
+        };
+      }));
       return {
         ...unit,
-        imageUrl
+        imageUrl,
+        items: items.filter(Boolean)
       };
-    });
-
+    }));
     // Push out the info
     matches.push({
       matchId,
@@ -171,7 +174,6 @@ async function getMatchStats(puuid) {
       units
     });
   }
-
   return matches;
 }
 
@@ -180,4 +182,3 @@ module.exports = {
   getStats,
   getMatchStats
 };
-
