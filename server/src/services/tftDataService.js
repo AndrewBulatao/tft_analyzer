@@ -74,11 +74,6 @@ async function getTftData(type, gameVersion) {
   }
 
   const data = await response.json();
-
-  console.log("DATA DRAGON VERSION:", version);
-  console.log("DATA TYPE:", type);
-  console.log("DATA COUNT:", Object.keys(data.data || {}).length);
-
   dataCache[cacheKey] = data.data;
 
   return data.data;
@@ -103,9 +98,6 @@ async function getItem(id, gameVersion) {
   const item = Object.values(items).find(
     item => item.id === id
   );
-  console.log("GET ITEM ID:", id);
-  console.log("GET ITEM VERSION:", gameVersion);
-  console.log("ITEM EXISTS:", !!item);
   return item || null;
 }
 
