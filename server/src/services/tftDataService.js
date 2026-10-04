@@ -115,8 +115,10 @@ async function getTrait(id, gameVersion) {
     "tft-trait",
     gameVersion
   );
-
-  return traits[id] || null;
+  const trait = Object.values(traits).find(
+    trait => trait.id === id
+  );
+  return trait || null;
 }
 
 // Build an image URL

@@ -158,6 +158,33 @@ async function getMatchStats(puuid) {
         items: items.filter(Boolean)
       };
     }));
+
+    // Get the image of the traits
+    const activeTraits = player.traits.filter(
+      trait => trait.tier_current > 0
+    );
+    const traits = await Promise.all(activeTraits.map(async (trait) => {
+      const traitData = await tftDataService.getTrait(
+        trait.name,
+        match.info.game_version
+      );
+      if (!traitData) {
+        return {
+          ...trait,
+          name: trait.name,
+          imageUrl: null
+        };
+      }
+      return {
+        ...trait,
+        name: traitData.name,
+        imageUrl: await tftDataService.getImageUrl(
+          traitData.image.group,
+          traitData.image.full,
+          match.info.game_version
+        )
+      };
+    }));
     // Push out the info
     matches.push({
       matchId,
@@ -170,7 +197,7 @@ async function getMatchStats(puuid) {
       gameVersion: match.info.game_version,
       queueId: match.info.queue_id,
       gameType: match.info.tft_game_type,
-      traits: player.traits,
+      traits,
       units
     });
   }

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/stats.css">
 </head>
 <body>
-<!-- STATS SECTION -->
+    <!-- STATS SECTION -->
     <section id="stats">
         <div class="stats-content">
             <header class="stats-header">
@@ -43,7 +43,6 @@
             </section>
         </div>
     </section>
-
     <section id="matches">
         <div class="matches-content">
             <header class="matches-header">
@@ -52,7 +51,39 @@
             <div id="matches-list"></div>
         </div>
     </section>
-<!-- JavaScript -->
+    <!-- Match Template -->
+    <template id="match-template">
+        <div class="match-card">
+            <div class="match-header">
+                <span class="match-placement"></span>
+                <span class="match-queue"></span>
+            </div>
+            <div class="match-summary">
+                <div>
+                    <span>Level</span>
+                    <strong class="match-level"></strong>
+                </div>
+                <div>
+                    <span>Time Alive</span>
+                    <strong class="match-time"></strong>
+                </div>
+                <div>
+                    <span>Damage</span>
+                    <strong class="match-damage"></strong>
+                </div>
+            </div>
+            <div class="match-little-legend"></div>
+            <div class="match-traits">
+                <h3>Traits</h3>
+                <div class="trait-list"></div>
+            </div>
+            <div class="match-units">
+                <h3>Units</h3>
+                <div class="unit-list"></div>
+            </div>
+        </div>
+    </template>
+    <!-- JavaScript -->
     <script src="js/stats.js"></script>
 </body>
 </html>

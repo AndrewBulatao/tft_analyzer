@@ -42,16 +42,6 @@ app.get("/", (req, res) => {
   res.send("TFT Analyzer Backend Running");
 });
 
-
-// Testing
-//app.use("/", testRoutes);
-//app.use("/export", exportRoutes);
-
-
-// Export service route
-const exportService = require("./services/exportService");
-const unitStats = require("./models/unitStats");
-
 // FOR ERASING DB
 app.delete("/reset-db", async (req, res) => {
   try {
