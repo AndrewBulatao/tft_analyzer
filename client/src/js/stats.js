@@ -118,19 +118,15 @@ async function loadMatches() {
                 traitList.appendChild(traitElement);
             });
 
-            
             // Get the unit list
             const unitList = matchCard.querySelector(".unit-list");
             
             // Go through each unit
             match.units.forEach((unit) => {
+                
                 // Create the unit element
                 const unitElement = document.createElement("div");
                 unitElement.classList.add("unit");
-                
-                // Create the unit image container
-                const unitImageContainer = document.createElement("div");
-                unitImageContainer.classList.add("unit-image-container");
                 
                 // Create the unit image
                 const unitImage = document.createElement("img");
@@ -138,28 +134,20 @@ async function loadMatches() {
                 unitImage.src = unit.imageUrl;
                 unitImage.alt = unit.name || unit.character_id;
                 
-                // Create the unit star level
-                const unitTier = document.createElement("span");
-                unitTier.classList.add("unit-tier");
-                
-                // Set the star level color
-                if (unit.tier === 1) {
-                    unitTier.classList.add("one-star");
-                } else if (unit.tier === 2) {
-                    unitTier.classList.add("two-star");
-                } else if (unit.tier === 3) {
-                    unitTier.classList.add("three-star");
-                }
-                unitTier.textContent = "★".repeat(unit.tier || 0);
-                
-                // Add the unit image and star level
-                unitImageContainer.appendChild(unitImage);
-                unitImageContainer.appendChild(unitTier);
+                // Create the hover information
+                const unitInfo = document.createElement("div");
+                unitInfo.classList.add("unit-info");
                 
                 // Create the unit name
                 const unitName = document.createElement("span");
                 unitName.classList.add("unit-name");
-                unitName.textContent = unit.name || unit.character_id.replace(/^DA_/, "").replace(/^18_/, "").replace(/18$/, "");
+                let displayName = unit.name || unit.character_id;
+                displayName = displayName.replace(/^DA_/, "");
+                displayName = displayName.replace(/^18_/, "");
+                displayName = displayName.replace(/18$/, "");
+                displayName = displayName.replace(/_AP$/, "");
+                displayName = displayName.replace(/_AD$/, "");
+                unitName.textContent = displayName;
                 
                 // Create the item container
                 const itemContainer = document.createElement("div");
@@ -175,12 +163,15 @@ async function loadMatches() {
                     itemImage.title = item.name;
                     itemContainer.appendChild(itemImage);
                 });
-                // Add unit elements together
-                unitElement.appendChild(unitImageContainer);
-
-                unitElement.appendChild(unitName);
-                unitElement.appendChild(itemContainer);
-
+                
+                // Add the name and items
+                unitInfo.appendChild(unitName);
+                unitInfo.appendChild(itemContainer);
+                
+                // Add the image and hover information
+                unitElement.appendChild(unitImage);
+                unitElement.appendChild(unitInfo);
+                
                 // Add the unit to the unit list
                 unitList.appendChild(unitElement);
             });
