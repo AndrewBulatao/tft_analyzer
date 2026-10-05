@@ -77,40 +77,47 @@ async function loadMatches() {
             matchCard.querySelector(".match-time").textContent = `${timeAlive}m`;
             matchCard.querySelector(".match-damage").textContent = match.damage;
             
-            // Display Little Legend
-            matchCard.querySelector(".match-little-legend").textContent = match.companion?.content_ID || "Little Legend";
             
             // Get the trait list
             const traitList = matchCard.querySelector(".trait-list");
-            
             // Go through each trait
             match.traits.forEach((trait) => {
                 // Create the trait element
                 const traitElement = document.createElement("div");
                 traitElement.classList.add("trait");
-            
+                console.log("TRAIT NAME:", trait.name);
+                console.log("TRAIT ELEMENT:", traitElement);
+                traitElement.title = trait.name;
+
                 // Create the trait image
                 const traitImage = document.createElement("img");
                 traitImage.classList.add("trait-image");
                 traitImage.src = trait.imageUrl;
+
                 traitImage.alt = trait.name;
-            
-                // Create the trait name
-                const traitName = document.createElement("span");
-                traitName.textContent = trait.name;
-            
                 // Create the trait tier
                 const traitTier = document.createElement("span");
+                traitTier.classList.add("trait-tier");
+
+                // Set the trait tier color
+                if (trait.tier_current === 1) {
+                    traitTier.classList.add("one-star");
+                } else if (trait.tier_current === 2) {
+                    traitTier.classList.add("two-star");
+                } else if (trait.tier_current === 3) {
+                    traitTier.classList.add("three-star");
+                }
+
                 traitTier.textContent = trait.tier_current;
-            
-                // Add the trait elements together
+
+                // Add the trait image and tier
                 traitElement.appendChild(traitImage);
-                traitElement.appendChild(traitName);
                 traitElement.appendChild(traitTier);
-            
+
                 // Add the trait to the trait list
                 traitList.appendChild(traitElement);
             });
+
             
             // Get the unit list
             const unitList = matchCard.querySelector(".unit-list");
