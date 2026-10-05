@@ -9,8 +9,6 @@ async function getMatchWithCache(matchId, { log = false } = {}) {
   const existingMatch = await Match.findOne({ matchId });
   
   if (existingMatch) {
-    console.log(`Cache hit: ${matchId}`);
-
     const match = existingMatch.matchData;
 
     if (log) {
@@ -31,13 +29,6 @@ async function getMatchWithCache(matchId, { log = false } = {}) {
     matchId,
     matchData: match
   });
-
-  if (log) {
-    console.log("QUEUE:", match.info.queue_id);
-    console.log("GAME TYPE:", match.info.tft_game_type);
-    console.log("VERSION:", match.info.game_version);
-    console.log("----------------------------");
-  }
 
   return match;
 }

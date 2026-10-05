@@ -1,9 +1,11 @@
 // Analyzes ALL given match data of player of interest
 // Uploads to database
+
 const riotService = require("../services/riotService");
 const matchService = require("../services/matchService");
 const unitStatsService = require("../services/unitStatsService");
 const traitStatsService = require("../services/traitService");
+const tftDataService = require("../services/tftDataService");
 
 // Get stats schema
 const PlayerStats = require("../models/playerStats");
@@ -13,7 +15,6 @@ async function getStats(puuid) {
   try {
     // Try getting match IDs
     const matchIds = await riotService.getMatchIds(puuid);
-
     // If player has 0 matches or no matchIDs, return puuid and total games = 0
     if (!matchIds || matchIds.length === 0) {
       return {
@@ -26,9 +27,8 @@ async function getStats(puuid) {
     let totalGames = 0;
     let placementSum = 0;
     let top4 = 0;
-
     let levelSum = 0;
-    let goldSum = 0; 
+    let goldSum = 0;
     let damageSum = 0;
 
     // Trait and unit stats accumulator
@@ -39,7 +39,6 @@ async function getStats(puuid) {
     // and extract this player's stats from that specific match
     for (const matchId of matchIds) {
       const match = await matchService.getMatchWithCache(matchId);
-
       const player = match.info.participants.find(
         (p) => p.puuid === puuid
       );
@@ -51,14 +50,12 @@ async function getStats(puuid) {
       // Placement matches and sum
       const placement = player.placement;
       placementSum += placement;
-
       if (placement <= 4) top4++;
-
       // End game stats
       levelSum += player.level || 0;
       goldSum += player.gold_left || 0;
       damageSum += player.total_damage_to_players || 0;
-      
+
       // Getting trait stats
       traitStatsService.processTraits(
         traitStats,
@@ -74,19 +71,15 @@ async function getStats(puuid) {
       );
     }
 
-
     // Get player stats
     const stats = {
       puuid,
       totalGames,
-
       avgPlacement: totalGames ? placementSum / totalGames : 0,
       top4Rate: totalGames ? top4 / totalGames : 0,
-
       avgLevel: totalGames ? levelSum / totalGames : 0,
       avgGoldLeft: totalGames ? goldSum / totalGames : 0,
       avgDamage: totalGames ? damageSum / totalGames : 0,
-
       lastComputed: new Date()
     };
 
@@ -95,7 +88,7 @@ async function getStats(puuid) {
       puuid,
       traitStats
     );
-     
+
     // Update unit stats
     await unitStatsService.saveUnitStats(
       puuid,
@@ -113,14 +106,11 @@ async function getStats(puuid) {
         returnDocument: "after"
       }
     );
-
     return stats;
-
   } catch (err) {
     console.error("playerStatsService error:", err);
     throw err;
   }
-
 }
 
 // Get Match Stats
@@ -132,16 +122,69 @@ async function getMatchStats(puuid) {
   }
 
   const matches = [];
-
   for (const matchId of matchIds) {
     const match = await matchService.getMatchWithCache(matchId);
-
     // Find summoner in list of players
     const player = match.info.participants.find(
       p => p.puuid === puuid
     );
+
     if (!player) continue;
     
+    // Get unit information and image URLs
+    const units = await Promise.all(player.units.map(async (unit) => {
+      const imageUrl = tftDataService.getChampionImageUrl(
+        unit.character_id
+      );
+      const items = await Promise.all((unit.itemNames || []).map(async (itemId) => {
+        const item = await tftDataService.getItem(
+          itemId,
+          match.info.game_version
+        );
+        if (!item) return null;
+        return {
+          id: item.id,
+          name: item.name,
+          imageUrl: await tftDataService.getImageUrl(
+            item.image.group,
+            item.image.full,
+            match.info.game_version
+          )
+        };
+      }));
+      return {
+        ...unit,
+        imageUrl,
+        items: items.filter(Boolean)
+      };
+    }));
+
+    // Get the image of the traits
+    const activeTraits = player.traits.filter(
+      trait => trait.tier_current > 0
+    );
+    const traits = await Promise.all(activeTraits.map(async (trait) => {
+      const traitData = await tftDataService.getTrait(
+        trait.name,
+        match.info.game_version
+      );
+      if (!traitData) {
+        return {
+          ...trait,
+          name: trait.name,
+          imageUrl: null
+        };
+      }
+      return {
+        ...trait,
+        name: traitData.name,
+        imageUrl: await tftDataService.getImageUrl(
+          traitData.image.group,
+          traitData.image.full,
+          match.info.game_version
+        )
+      };
+    }));
     // Push out the info
     matches.push({
       matchId,
@@ -154,8 +197,8 @@ async function getMatchStats(puuid) {
       gameVersion: match.info.game_version,
       queueId: match.info.queue_id,
       gameType: match.info.tft_game_type,
-      traits: player.traits,
-      units: player.units
+      traits,
+      units
     });
   }
   return matches;

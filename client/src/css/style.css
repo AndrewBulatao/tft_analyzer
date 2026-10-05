@@ -3,6 +3,20 @@ body {
   min-height: 100vh;
   font-family: 'Beaufort',sans-serif;
   color: #dce7e3;
+  cursor: none;
+}
+
+.custom-cursor {
+    position: fixed;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #fff1a8;
+    box-shadow: 0 0 6px #fff1a8, 0 0 15px #f5bd72, 0 0 30px rgba(245,189,114,0.7);
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: background 0.4s ease, box-shadow 0.4s ease;
 }
 
 @font-face {
