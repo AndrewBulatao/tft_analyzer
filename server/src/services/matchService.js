@@ -43,13 +43,10 @@ async function getFilteredMatches(
 ) {
 
     const matchIds = await riotService.getMatchIds(puuid);
-
     const matches = [];
 
     for (const matchId of matchIds) {
-
         const match = await getMatchWithCache(matchId);
-
         const player = match.info.participants.find(
             p => p.puuid === puuid
         );
@@ -58,12 +55,9 @@ async function getFilteredMatches(
 
         // Check set
         if (set) {
-
             const firstTrait = player.traits.find(t => t.name);
-
             const matchSet =
                 firstTrait?.name.match(/^TFT(\d+)_/)?.[1];
-
             if (`${matchSet}` !== `${set}`) {
                 continue;
             }
@@ -71,7 +65,6 @@ async function getFilteredMatches(
 
         // Check gamemode
         if (gameMode) {
-
             // Check to see which gameMode it is
             if (match.info.queue_id !== gameMode) {
                 continue;
@@ -79,7 +72,6 @@ async function getFilteredMatches(
         }
 
         matches.push(match);
-
         if (matches.length >= count) {
             break;
         }
