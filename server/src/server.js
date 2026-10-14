@@ -7,16 +7,13 @@ const app = express();
 const cors = require("cors");
 app.use(cors());
 
-// Routes
-const exportRoutes = require("./routes/export.routes");
-const testRoutes = require("./routes/test");
-
 // Services
 const riotService = require("./services/riotService");
 const matchService = require("./services/matchService");
 const playerStatsService = require("./services/playerStatsService");
 const traitStatsService = require("./services/traitService");
 const unitStatsService = require("./services/unitStatsService");
+const matchReportService = require("./services/matchReportService");
 
 // Models
 const Player = require("./models/player");
@@ -203,6 +200,33 @@ app.get("/placements/:gameName/:tagLine", async (req, res) => {
     });
   }
 });
+
+// Get other participants stats
+app.get("/match-report/:matchId/:puuid", async (req, res) => {
+    try {
+        const { matchId, puuid } = req.params;
+
+        const report = await matchReportService.getMatchReport(
+            matchId,
+            puuid
+        );
+
+        if (!report) {
+            return res.status(404).json({
+                error: "Match or player not found"
+            });
+        }
+
+        res.json(report);
+    } catch (err) {
+        console.error("Match report error:", err);
+
+        res.status(500).json({
+            error: "Failed to generate match report"
+        });
+    }
+});
+
 
 // Server is running
 app.listen(3000, () => {
