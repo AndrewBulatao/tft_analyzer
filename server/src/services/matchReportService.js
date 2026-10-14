@@ -1,9 +1,80 @@
 // Retrieve match data and process trait and unit statistics
-// for all participants, then return the match metadata,
-// requested player's placement, and participant statistics as JSON.
+// for all participants, then calculate the searched player's
+// combat score and return the match report.
+
 const matchService = require("./matchService");
 const traitService = require("./traitService");
 const unitStatsService = require("./unitStatsService");
+
+// Calculate a percentile score relative to the other participants
+function calculatePercentile(value, participants, field) {
+    const values = participants
+        .map(player => player[field])
+        .filter(Number.isFinite);
+
+    if (!Number.isFinite(value) || values.length < 2) {
+        return null;
+    }
+
+    const lowerValues = values.filter(
+        participantValue => participantValue < value
+    ).length;
+
+    return Math.round(
+        (lowerValues / (values.length - 1)) * 100
+    );
+}
+
+// Calculate the searched player's Combat score
+function calculateCombatScore(player, participants) {
+    const placement = player.placement;
+    const participantCount = participants.length;
+
+    // Calculate placement score, where a higher placement is better
+    const placementScore =
+        Number.isFinite(placement) && participantCount > 1
+            ? ((participantCount - placement) / (participantCount - 1)) * 100
+            : null;
+
+    // Compare damage and eliminations against the lobby
+    const damageScore = calculatePercentile(
+        player.total_damage_to_players,
+        participants,
+        "total_damage_to_players"
+    );
+
+    const eliminationScore = calculatePercentile(
+        player.players_eliminated,
+        participants,
+        "players_eliminated"
+    );
+
+    // Use only metrics with available data
+    const components = [
+        { score: placementScore, weight: 0.5 },
+        { score: damageScore, weight: 0.3 },
+        { score: eliminationScore, weight: 0.2 }
+    ].filter(component => component.score !== null);
+
+    // Return null if no usable metrics are available
+    if (components.length === 0) {
+        return null;
+    }
+
+    // Redistribute weights when a metric is unavailable
+    const totalWeight = components.reduce(
+        (sum, component) => sum + component.weight,
+        0
+    );
+
+    const weightedScore = components.reduce(
+        (sum, component) =>
+            sum + component.score * component.weight,
+        0
+    );
+
+    return Math.round(weightedScore / totalWeight);
+}
 
 async function getMatchReport(matchId, puuid) {
     // Retrieve match data from cache or Riot API
@@ -23,10 +94,21 @@ async function getMatchReport(matchId, puuid) {
 
     // Make sure the requested player participated in this match
     if (!requestedPlayer) {
+        console.log("Requested player was not found in match:", {
+            matchId,
+            puuid
+        });
+
         return null;
     }
 
-    // Analyze each participant in the match
+    // Calculate Combat score for the searched player
+    const combatScore = calculateCombatScore(
+        requestedPlayer,
+        participants
+    );
+
+    // Analyze each participant for existing trait and unit statistics
     const participantReports = participants.map(player => {
         const traitStats = {};
         const unitStats = {};
@@ -67,7 +149,10 @@ async function getMatchReport(matchId, puuid) {
         gameType: match.info.tft_game_type,
         requestedPlayer: {
             puuid: requestedPlayer.puuid,
-            placement: requestedPlayer.placement
+            placement: requestedPlayer.placement,
+            totalDamageToPlayers: requestedPlayer.total_damage_to_players,
+            playersEliminated: requestedPlayer.players_eliminated,
+            combatScore
         },
         participants: participantReports
     };
