@@ -36,7 +36,10 @@ async function loadStats() {
             `${(stats.top4Rate * 100).toFixed(1)}%`;
         document.querySelector("#average-level").textContent = stats.avgLevel.toFixed(1);
         document.querySelector("#average-gold").textContent = stats.avgGoldLeft.toFixed(1);
-        document.querySelector("#average-damage").textContent = stats.avgDamage.toFixed(1);
+
+        // Display damage as before, but do not use it in analytics
+        document.querySelector("#average-damage").textContent =
+            Number.isFinite(stats.avgDamage) ? stats.avgDamage.toFixed(1) : "--";
     } catch (err) {
         console.error(err);
 
@@ -44,6 +47,108 @@ async function loadStats() {
         document.querySelector("#header_summoner").textContent =
             "Failed to load player stats";
     }
+}
+
+// Calculate a score from 0 to 100
+function calculatePercentileScore(value, values, higherIsBetter = true) {
+    const validValues = values.filter(Number.isFinite);
+
+    if (!Number.isFinite(value) || validValues.length < 2) {
+        return null;
+    }
+
+    const betterValues = validValues.filter(
+        otherValue => higherIsBetter
+            ? otherValue < value
+            : otherValue > value
+    ).length;
+
+    return Math.round((betterValues / (validValues.length - 1)) * 100);
+}
+
+// Update an analytics bar and label
+function updateAnalyticsBar(card, scoreClass, fillClass, score) {
+    const scoreElement = card.querySelector(`.${scoreClass}`);
+    const fillElement = card.querySelector(`.${fillClass}`);
+
+    if (!scoreElement || !fillElement) {
+        return;
+    }
+
+    // Display unavailable scores without inventing data
+    if (!Number.isFinite(score)) {
+        scoreElement.textContent = "--";
+        fillElement.style.width = "0%";
+        fillElement.setAttribute("aria-valuenow", "0");
+        return;
+    }
+
+    // Keep the score within 0 to 100
+    const boundedScore = Math.max(0, Math.min(100, Math.round(score)));
+
+    scoreElement.textContent = `${boundedScore}/100`;
+    fillElement.style.width = `${boundedScore}%`;
+    fillElement.setAttribute("role", "progressbar");
+    fillElement.setAttribute("aria-valuemin", "0");
+    fillElement.setAttribute("aria-valuemax", "100");
+    fillElement.setAttribute("aria-valuenow", String(boundedScore));
+}
+
+// Calculate heuristic analytics for a match
+function calculateMatchAnalytics(match) {
+    // Combat: lower placement and more eliminations are better
+    const placement = Number(match.placement);
+    const eliminations = Number(match.playersEliminated);
+
+    const placementScore = Number.isFinite(placement)
+        ? ((8 - placement) / 7) * 100
+        : null;
+
+    // This is a heuristic score, not a lobby percentile
+    const eliminationScore = Number.isFinite(eliminations)
+        ? Math.min(100, Math.max(0, eliminations * 25))
+        : null;
+
+    const combatComponents = [placementScore, eliminationScore]
+        .filter(Number.isFinite);
+
+    const combat = combatComponents.length
+        ? combatComponents.reduce((sum, score) => sum + score, 0) /
+            combatComponents.length
+        : null;
+
+    // Economy: higher end-of-game gold gives a higher score
+    const goldLeft = Number(match.goldLeft);
+    const economy = Number.isFinite(goldLeft)
+        ? Math.min(100, Math.max(0, (goldLeft / 20) * 100))
+        : null;
+
+    // Composition: heuristic based on active traits and board size
+    const activeTraits = (match.traits || []).filter(
+        trait => Number(trait.tier_current) > 0
+    ).length;
+
+    const unitCount = (match.units || []).length;
+
+    const composition = match.traits && match.units
+        ? Math.min(
+            100,
+            Math.round((activeTraits / 8) * 50 + (unitCount / 12) * 50)
+        )
+        : null;
+
+    // Leveling: heuristic based on final level
+    const level = Number(match.level);
+    const leveling = Number.isFinite(level)
+        ? Math.min(100, Math.max(0, (level / 10) * 100))
+        : null;
+
+    return {
+        combat,
+        economy,
+        composition,
+        leveling
+    };
 }
 
 // Get player's recent matches
@@ -95,7 +200,46 @@ async function loadMatches() {
 
             matchCard.querySelector(".match-level").textContent = match.level;
             matchCard.querySelector(".match-time").textContent = `${timeAlive}m`;
-            matchCard.querySelector(".match-damage").textContent = match.damage;
+            matchCard.querySelector(".match-damage").textContent =
+                Number.isFinite(Number(match.damage)) ? match.damage : "--";
+
+            // Calculate and display analytics
+            const analytics = calculateMatchAnalytics(match);
+
+            updateAnalyticsBar(
+                matchCard,
+                "combat-score",
+                "combat-fill",
+                analytics.combat
+            );
+
+            updateAnalyticsBar(
+                matchCard,
+                "economy-score",
+                "economy-fill",
+                analytics.economy
+            );
+
+            updateAnalyticsBar(
+                matchCard,
+                "composition-score",
+                "composition-fill",
+                analytics.composition
+            );
+
+            updateAnalyticsBar(
+                matchCard,
+                "leveling-score",
+                "leveling-fill",
+                analytics.leveling
+            );
+
+            // Update analytics note
+            const analyticsNote = matchCard.querySelector(".analytics-note");
+            if (analyticsNote) {
+                analyticsNote.textContent =
+                    "Heuristic scores based on this match's available stats.";
+            }
 
             // Get the trait list
             const traitList = matchCard.querySelector(".trait-list");
