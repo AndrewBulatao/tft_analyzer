@@ -1,10 +1,8 @@
-// Retrieve match data and process trait and unit statistics
-// for all participants, then calculate the searched player's
-// combat score and return the match report.
 
 const matchService = require("./matchService");
 const traitService = require("./traitService");
 const unitStatsService = require("./unitStatsService");
+const levelingService = require("./levelingService");
 
 // Calculate a percentile score relative to the other participants
 function calculatePercentile(value, participants, field) {
@@ -98,7 +96,6 @@ async function getMatchReport(matchId, puuid) {
             matchId,
             puuid
         });
-
         return null;
     }
 
@@ -106,6 +103,13 @@ async function getMatchReport(matchId, puuid) {
     const combatScore = calculateCombatScore(
         requestedPlayer,
         participants
+    );
+
+    // Analyze the player's likely leveling strategy
+    const levelingAnalysis = await levelingService.analyzeLeveling(
+        requestedPlayer,
+        participants,
+        match.info.game_version
     );
 
     // Analyze each participant for existing trait and unit statistics
@@ -131,6 +135,9 @@ async function getMatchReport(matchId, puuid) {
             puuid: player.puuid,
             placement: player.placement,
             level: player.level,
+            goldLeft: player.gold_left,
+            totalDamageToPlayers: player.total_damage_to_players,
+            playersEliminated: player.players_eliminated,
             traits: (player.traits || []).filter(
                 trait => trait.tier_current > 0
             ),
@@ -150,9 +157,12 @@ async function getMatchReport(matchId, puuid) {
         requestedPlayer: {
             puuid: requestedPlayer.puuid,
             placement: requestedPlayer.placement,
+            level: requestedPlayer.level,
+            goldLeft: requestedPlayer.gold_left,
             totalDamageToPlayers: requestedPlayer.total_damage_to_players,
             playersEliminated: requestedPlayer.players_eliminated,
-            combatScore
+            combatScore,
+            levelingAnalysis
         },
         participants: participantReports
     };
