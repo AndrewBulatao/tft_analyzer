@@ -1,4 +1,3 @@
-
 const tftDataService = require("./tftDataService");
 
 // Count unit costs on the player's final board
@@ -11,8 +10,6 @@ function analyzeUnitCosts(units) {
         5: 0
     };
 
-    let knownCostCount = 0;
-
     (units || []).forEach(unit => {
         const cost = Number(unit.cost);
 
@@ -20,16 +17,21 @@ function analyzeUnitCosts(units) {
             return;
         }
 
+        // Print the counter before incrementing
+        console.log(`Before: ${costCounts[cost]}`);
+
+        // Increment the counter for this unit's cost
         costCounts[cost] = (costCounts[cost] || 0) + 1;
-        knownCostCount++;
+
+        // Print the counter after incrementing
+        console.log(`After: ${costCounts[cost]}`);
+        console.log(`Updated ${cost}-cost counter`);
+        console.log("All counters:", costCounts);
     });
 
-    return {
-        costCounts,
-        knownCostCount,
-        totalUnits: (units || []).length
-    };
+    return costCounts;
 }
+// TODO: check the level of units. number of units isnt what determines reroll
 
 // Estimate the likely strategy from the final composition
 async function inferLevelingStrategy(units, gameVersion) {
@@ -114,6 +116,7 @@ function analyzeLobbyLevel(player, participants) {
 
     const playerLevel = player.level;
 
+    // Init levels
     if (!Number.isFinite(playerLevel) || levels.length < 2) {
         return {
             playerLevel: playerLevel ?? null,
